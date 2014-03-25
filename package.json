@@ -1,0 +1,34 @@
+{
+  "name": "verbalize",
+  "description": "A lightweight command line logging utility, with verbose mode and colors by chalk.",
+  "version": "0.0.4",
+  "homepage": "https://github.com/jonschlinkert/verbalize",
+  "author": {
+    "name": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonschlinkert/verbalize.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/verbalize/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/jonschlinkert/verbalize/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "dependencies": {
+    "chalk": "~0.4.0",
+    "minimist": "0.0.8"
+  },
+  "devDependencies": {
+    "verb": "~0.1.20"
+  }
+}
