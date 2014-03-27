@@ -14,6 +14,8 @@ log.verbose.info('this is more verbose info.');
 log.mode.verbose = false;
 
 
+log.magenta('foo');
+
 log('This is a message');
 log.bold('This is a bold message');
 log.info('This is an info message');

@@ -8,8 +8,7 @@
 
 'use strict';
 
-var colors = require('chalk');
-
+var chalk = require('chalk');
 
 
 /**
@@ -21,9 +20,9 @@ var colors = require('chalk');
 
 var log = function () {
   var args = Array.prototype.map.call(arguments, function (arg) {
-    return colors.stripColor(arg);
+    return chalk.stripColor(arg);
   });
-  args[0] = colors.bold(args[0]);
+  args[0] = chalk.bold(args[0]);
   return console.log.apply(this, args);
 };
 
@@ -56,7 +55,7 @@ log.verbose = {};
 
 var time = function() {
   var time = new Date().toLocaleTimeString();
-  return colors.bgBlack.white(time) + ' ';
+  return chalk.bgBlack.white(time) + ' ';
 };
 
 
@@ -68,7 +67,7 @@ var time = function() {
  */
 
 var format = function(color, text) {
-  return colors[color]('  ' + log.runner + ' [' + text + '] ·');
+  return chalk[color]('  ' + log.runner + ' [' + text + '] ·');
 };
 
 
@@ -81,7 +80,7 @@ var format = function(color, text) {
 
 log.timestamp = function () {
   var args = arguments;
-  args[0] = verb.utils.time() + colors.gray(args[0]);
+  args[0] = verb.utils.time() + chalk.gray(args[0]);
   return console.log.apply(this, args);
 };
 
@@ -141,7 +140,7 @@ log.writeln = function () {
 
 log.bold = function () {
   var args = arguments;
-  args[0] = colors.bold(args[0]);
+  args[0] = chalk.bold(args[0]);
   return console.log.apply(this, args);
 };
 
@@ -154,7 +153,7 @@ log.bold = function () {
 
 log.info = function () {
   var args = arguments;
-  args[0] = colors.cyan(args[0]);
+  args[0] = chalk.cyan(args[0]);
   return console.log.apply(this, args);
 };
 
@@ -167,7 +166,7 @@ log.info = function () {
 
 log.success = function () {
   var args = arguments;
-  args[0] = colors.green(args[0]);
+  args[0] = chalk.green(args[0]);
   return console.log.apply(this, args);
 };
 
@@ -181,7 +180,7 @@ log.success = function () {
 
 log.done = function () {
   var args = arguments;
-  args[0] = (colors.green('  ' + verb.runner.name + ' [' + args[0] + ']'));
+  args[0] = (chalk.green('  ' + verb.runner.name + ' [' + args[0] + ']'));
   return console.log.apply(this, args);
 };
 
@@ -195,7 +194,7 @@ log.done = function () {
 
 log.warn = function () {
   var args = arguments;
-  args[0] = colors.yellow(args[0]);
+  args[0] = chalk.yellow(args[0]);
   return console.warn.apply(this, args);
 };
 
@@ -209,7 +208,7 @@ log.warn = function () {
 
 log.error = function () {
   var args = arguments;
-  args[0] = colors.red(args[0]);
+  args[0] = chalk.red(args[0]);
   return console.error.apply(this, args);
 };
 
@@ -223,11 +222,18 @@ log.error = function () {
 
 log.fatal = function () {
   var args = arguments;
-  args[0] = (colors.red('  ' + log.runner + ' [FAIL]:') + colors.gray(' · ') + args[0]);
+  args[0] = (chalk.red('  ' + log.runner + ' [FAIL]:') + chalk.gray(' · ') + args[0]);
   console.log();
   console.log.apply(this, args);
   process.exit(1);
 };
+
+
+/**
+ * Expose chalk
+ */
+
+log.color = chalk;
 
 
 /**
@@ -247,5 +253,6 @@ Object.keys(log).filter(function(key) {
     }
   };
 });
+
 
 module.exports = log;
