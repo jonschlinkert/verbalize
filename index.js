@@ -43,7 +43,22 @@ log.runner = '';
 
 log.mode = {};
 log.mode.verbose = false;
-log.verbose = {};
+
+
+/**
+ * Style a basic separator
+ */
+
+log.sep = chalk.gray('·');
+
+
+/**
+ * Expose chalk
+ */
+
+Object.keys(chalk.styles).map(function(color) {
+  log[color] = chalk[color];
+});
 
 
 /**
@@ -67,7 +82,7 @@ var time = function() {
  */
 
 var format = function(color, text) {
-  return chalk[color]('  ' + log.runner + ' [' + text + '] ·');
+  return chalk[color]('  ' + log.runner + ' [' + text + '] ' + log.sep);
 };
 
 
@@ -80,7 +95,7 @@ var format = function(color, text) {
 
 log.timestamp = function () {
   var args = arguments;
-  args[0] = verb.utils.time() + chalk.gray(args[0]);
+  args[0] = time() + chalk.gray(args[0]);
   return console.log.apply(this, args);
 };
 
@@ -180,7 +195,7 @@ log.success = function () {
 
 log.done = function () {
   var args = arguments;
-  args[0] = (chalk.green('  ' + verb.runner.name + ' [' + args[0] + ']'));
+  args[0] = (chalk.green('  ' + log.runner + ' [' + args[0] + ']'));
   return console.log.apply(this, args);
 };
 
@@ -230,16 +245,11 @@ log.fatal = function () {
 
 
 /**
- * Expose chalk
- */
-
-log.color = chalk;
-
-
-/**
  * Expose all properties on the `log` object
  * to `verbose` mode.
  */
+
+log.verbose = {};
 
 Object.keys(log).filter(function(key) {
   return typeof log[key] === 'function';
