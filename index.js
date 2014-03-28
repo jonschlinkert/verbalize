@@ -147,19 +147,6 @@ log.writeln = function () {
 
 
 /**
- * Bold
- *
- * @api public
- * @return {string}
- */
-
-log.bold = function () {
-  var args = arguments;
-  args[0] = chalk.bold(args[0]);
-  return console.log.apply(this, args);
-};
-
-/**
  * Info
  *
  * @api public

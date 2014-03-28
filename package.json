@@ -1,6 +1,6 @@
 {
   "name": "verbalize",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A lightweight command line logging utility, with verbose mode and colors by chalk.",
   "author": {
     "name": "Jon Schlinkert",
