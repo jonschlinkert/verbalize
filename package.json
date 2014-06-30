@@ -22,7 +22,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha --R spec"
+    "test": "mocha -R spec"
   },
   "dependencies": {
     "chalk": "~0.4.0"
