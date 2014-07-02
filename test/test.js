@@ -1,98 +1,29 @@
-var _ = require('lodash');
+/*!
+ * verbalize <https://github.com/jonschlinkert/verbalize>
+ *
+ * Copyright (c) 2014 Jon Schlinkert, contributors.
+ * Licensed under the MIT License
+ */
+
+var expect = require('chai').expect;
 var Verbalize = require('../');
-var logger = new Verbalize({verbose: false, sep: ' :: '});
 
-var keys = _.methods(logger);
+describe('when foo is passed:', function () {
+  var logger;
+  beforeEach(function() {
+    logger = new Verbalize();
+  });
 
-logger.set('runner', {
-  name: 'Verbalize',
-  url: 'https://github.com/jonschlinkert/verbalize'
+  it('should get and set values.', function () {
+    logger.set('a', 'b');
+    expect(logger.get('a')).to.eql('b');
+  });
+
+  it('should .', function () {
+    // logger.enable('stripColor');
+    // logger.info('foo');
+    // logger.disable('stripColor');
+    // logger.info('foo');
+    // expect(logger.option('a')).to.eql('b');
+  });
 });
-
-console.log(logger.get('runner'));
-
-
-// console.log(logger)
-// logger.mode('verbose');
-
-// logger.run('foo');
-// logger.success('foo');
-logger.error('foo');
-
-
-var msg = [
-  'one',
-  'two',
-  'three'
-].join('\n');
-// logger.warn('foo', msg, logger.sep());
-
-
-var colors = [
-  'bgBlack',
-  'bgBlue',
-  'bgCyan',
-  'bgGreen',
-  'bgMagenta',
-  'bgRed',
-  'bgWhite',
-  'bgYellow',
-  'black',
-  'blue',
-  'bold',
-  'cyan',
-  'gray',
-  'green',
-  'grey',
-  'inverse',
-  'italic',
-  'magenta',
-  'red',
-  'reset',
-  'strikethrough',
-  'underline',
-  'white',
-  'yellow'
-];
-
-
-var exclude = [
-  '_addRunner',
-  '_format',
-  '_formatStyles',
-  '_mode',
-  '_write',
-  '_writeln',
-  'fatal',
-  'format',
-  'get',
-  'keys',
-  'mode',
-  'omit',
-  'options',
-  'sep',
-  'set',
-  'verbose'
-];
-
-var styles = _.difference(keys, colors, exclude);
-
-_.forEach(styles, function (style) {
-  logger[style]('This is style: ' + style);
-});
-
-
-// _.forEach(colors, function (color) {
-//   console.log('This is color:', logger[color](color));
-// });
-
-
-// if (logger._mode === 'verbose') {
-//   _.forEach(colors, function (color) {
-//     console.log('This is color:', logger.verbose[color](color), 'in verbose mode.');
-//   });
-
-//   _.forEach(styles, function (style) {
-//     console.log('This is style:', logger.verbose[style](style), 'in verbose mode.');
-//   });
-// }

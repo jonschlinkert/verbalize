@@ -1,4 +1,4 @@
-/**
+/*!
  * verbalize <https://github.com/jonschlinkert/verbalize>
  * A lightweight logging library.
  *
@@ -11,7 +11,7 @@
 var util = require('util');
 var chalk = require('chalk');
 var _ = require('lodash');
-var _str = require('underscore.string');
+var Config = require('./config');
 
 
 var toArray = function(args) {
@@ -40,22 +40,15 @@ function Verbalize(options) {
   if (!(this instanceof Verbalize)) {
     return new Verbalize(options);
   }
+
+  Config.call(this);
+
   this.options = options || {};
   this._sep    = this.options.sep;
   this._runner = this.options.runner;
   this._mode   = this.options.mode;
   this.verbose = {};
   this.cache = {};
-
-  // Get or set a Verbalize `runner`
-  Object.defineProperty(this, 'runner', {
-    set: function (value) {
-      this.set('runner', value);
-    }.bind(this),
-    get: function () {
-      return this.get('runner');
-    }.bind(this)
-  });
 
   // Expose chalk
   Object.keys(chalk.styles).map(function(color) {
@@ -78,107 +71,68 @@ function Verbalize(options) {
   }.bind(this));
 }
 
-
-/**
- * ## .option
- *
- * Get or set an option.
- *
- * @param  {String} `key`
- * @param  {*} `value`
- * @return {*}
- */
-
-Verbalize.prototype.option = function (key, value) {
-  if (arguments.length === 1) {
-    return this.get(key);
-  }
-  this.set(key, value);
-};
+util.inherits(Verbalize, Config);
 
 
 /**
- * Define the current Verbalize `runner` so that it
- * shows as part of certain console messages.
+ * ## .stripColor
  *
- * @param  {Object} `runner`
- * @return {Object}
- */
-
-// Verbalize.prototype.runner = function (runner) {
-//   return this._runner = runner ? {
-//     name: runner.name,
-//     url: runner.url
-//   } : this._runner;
-// };
-
-
-/**
- * ## .set
+ * [Strip color](https://github.com/sindresorhus/strip-ansi) from a string.
  *
- * Assign `value` to `key`.
- *
- * **Example**
+ * **Example usage**:
  *
  * ```js
- * logger.set('a', {b: 'c'});
+ * // using getter/setters
+ * logger.stripColor = false;
+ * logger.stripColor = true;
+ *
+ * // or enable/disable
+ * logger.enable('stripColor');
+ * logger.disable('stripColor');
  * ```
  *
- * @method `set`
- * @param {String} `key`
- * @param {*} `value`
- * @return {Verbalize} for chaining
  * @api public
  */
 
-Verbalize.prototype.set = function set(key, value) {
-  this.cache[key] = value;
-  return this;
-};
+Object.defineProperty(Verbalize.prototype, 'stripColor', {
+  set: function (value) {
+    Verbalize.prototype.set('stripColor', value);
+  }.bind(Verbalize.prototype),
+  get: function () {
+    return Verbalize.prototype.get('stripColor');
+  }.bind(Verbalize.prototype)
+});
 
 
 /**
- * ## .get
+ * ## .runner
  *
- * Get the stored value of `key`.
+ * Getter/setter for defining a Verbalize `runner`. This is useful
+ * if you want the runner to display in the console or in templates.
  *
- * **Example**
+ * **Example usage**:
  *
  * ```js
- * cache.get('foo');
+ * logger.runner = {
+ *   name: 'your-lib',
+ *   url: https://github.com/abc/your-lib
+ * };
+ *
+ * console.log(logger.runner)
+ * //=> { name: 'your-lib', url: https://github.com/abc/your-lib };
  * ```
  *
- * @method get
- * @param {*} `key`
- * @return {*}
  * @api public
  */
 
-Verbalize.prototype.get = function get(key) {
-  return this.cache[key];
-};
-
-
-/**
- * ## .keys
- *
- * Return all of the keys on the `Verbalize` prototype.
- *
- * **Example**
- *
- * ```js
- * cache.keys();
- * ```
- *
- * @method `keys`
- * @param {*} `key`
- * @return {*}
- * @api public
- */
-
-Verbalize.prototype.keys = function () {
-  return _.methods(this);
-};
+Object.defineProperty(Verbalize.prototype, 'runner', {
+  set: function (value) {
+    Verbalize.prototype.set('runner', value);
+  }.bind(Verbalize.prototype),
+  get: function () {
+    return Verbalize.prototype.get('runner');
+  }.bind(Verbalize.prototype)
+});
 
 
 /**
@@ -188,7 +142,7 @@ Verbalize.prototype.keys = function () {
  *
  * @method `mode`
  * @return {String}
- * @api private
+ * @api public
  */
 
 Verbalize.prototype.mode = function (mode) {
@@ -203,6 +157,7 @@ Verbalize.prototype.mode = function (mode) {
  *
  * @param  {Array} `arr`
  * @return {Array}
+ * @api public.
  */
 
 Verbalize.prototype.omit = function (arr) {
@@ -221,63 +176,6 @@ Verbalize.prototype.omit = function (arr) {
 
 
 /**
- * ## ._formatStyles
- *
- * Base formatting for special logging.
- *
- * @method `_formatStyles`
- * @return {String}
- * @api private
- */
-
-Verbalize.prototype._formatStyles = function () {
-  var args = _.flatten([].slice.call(arguments, function (arg) {
-    return chalk.stripColor(arg);
-  }));
-  args[1] = chalk[args[0]](args[1]);
-  args.shift();
-  return process.stdout.write.apply(process.stdout, args);
-};
-
-
-/**
- * ## _.format
- *
- * Base formatting for special logging.
- *
- * @return {String}
- * @api private
- */
-
-Verbalize.prototype._format = function (args) {
-  args = _.toArray(args);
-  if (args.length > 0) {
-    args[0] = String(args[0]);
-  }
-  if (this._runner) {
-    return util.format.apply(util, args);
-  }
-  return util.format.apply(util, args);
-};
-
-
-
-/**
- * Done.
- *
- * @return {string}
- * @api public
- */
-
-Verbalize.prototype._addRunner = function () {
-  var args = _.toArray(arguments);
-  args[0] = chalk.green('  ' + this.runner.name + ' [' + args[0] + ']' + this._sep);
-  return args;
-};
-
-
-
-/**
  * ## ._write
  *
  * Write to the console.
@@ -286,8 +184,9 @@ Verbalize.prototype._addRunner = function () {
  * @api private
  */
 
-Verbalize.prototype._write = function (msg) {
-  process.stdout.write(msg || '');
+Verbalize.prototype._write = function () {
+  var args = _.flatten([].slice.call(arguments));
+  return process.stdout.write.apply(process.stdout, args);
 };
 
 
@@ -303,6 +202,48 @@ Verbalize.prototype._write = function (msg) {
 
 Verbalize.prototype._writeln = function (msg) {
   this._write((msg || '') + '\n');
+};
+
+
+/**
+ * ## ._format
+ *
+ * Base formatting.
+ *
+ * @return {String}
+ * @api private
+ */
+
+Verbalize.prototype._format = function (args) {
+  args = _.toArray(args);
+  if (args.length > 0) {
+    args[0] = String(args[0]);
+  }
+  return util.format.apply(util, args);
+};
+
+
+/**
+ * ## ._formatStyles
+ *
+ * Base formatting for special logging.
+ *
+ * @method `_formatStyles`
+ * @return {String}
+ * @api private
+ */
+
+Verbalize.prototype._formatStyles = function (color) {
+  var args = [].slice.call(arguments);
+  args[1] = this[color](args[1]);
+  args.shift();
+
+  return this._write(args.map(function (arg) {
+    if (this.enabled('stripColor')) {
+      return chalk.stripColor(arg);
+    }
+    return arg;
+  }.bind(this)));
 };
 
 
@@ -341,7 +282,7 @@ Verbalize.prototype.writeln = function () {
  *
  * Style a basic separator
  *
- * @return {string}
+ * @return {String}
  * @api public
  */
 
@@ -353,7 +294,9 @@ Verbalize.prototype.sep = function (str) {
 /**
  * ## .log
  *
- * @return {string}
+ * **bold** white message.
+ *
+ * @return {String}
  * @api public
  */
 
@@ -363,6 +306,21 @@ Verbalize.prototype.log = function () {
   });
   args[0] = chalk.bold(args[0]);
   return console.log.apply(this, args);
+};
+
+
+/**
+ * ## .subhead
+ *
+ * **bold** white message.
+ *
+ * @return {String}
+ * @api public
+ */
+
+Verbalize.prototype.subhead = function () {
+  var args = [].slice.call(arguments);
+  return this._formatStyles('bold', args);
 };
 
 
@@ -384,13 +342,15 @@ Verbalize.prototype.time = function () {
 /**
  * ## .timestamp
  *
- * @return {string}
+ * Display a **gray** timestamp.
+ *
+ * @return {String}
  * @api public
  */
 
 Verbalize.prototype.timestamp = function () {
   var args = [].slice.call(arguments);
-  args[0] = this.time() + chalk.gray(args[0]);
+  args[0] = this.time() + this.gray(args[0]);
   return console.log.apply(this, args);
 };
 
@@ -398,12 +358,14 @@ Verbalize.prototype.timestamp = function () {
 /**
  * ## .inform
  *
- * @return {string}
+ * Display a **gray** informational message.
+ *
+ * @return {String}
  * @api public
  */
 
 Verbalize.prototype.inform = function () {
-  var args = _.toArray(arguments);
+  var args = [].slice.call(arguments);
   return this._formatStyles('gray', args);
 };
 
@@ -411,7 +373,9 @@ Verbalize.prototype.inform = function () {
 /**
  * ## .info
  *
- * @return {string}
+ * Display a **cyan** informational message.
+ *
+ * @return {String}
  * @api public
  */
 
@@ -421,11 +385,12 @@ Verbalize.prototype.info = function () {
 };
 
 
-
 /**
  * ## .warn
  *
- * @return {string}
+ * Display a **yellow** warning message.
+ *
+ * @return {String}
  * @api public
  */
 
@@ -438,7 +403,9 @@ Verbalize.prototype.warn = function () {
 /**
  * ## .error
  *
- * @return {string}
+ * Display a **red** error message.
+ *
+ * @return {String}
  * @api public
  */
 
@@ -451,39 +418,30 @@ Verbalize.prototype.error = function () {
 /**
  * ## .success
  *
- * @return {string}
+ * Display a **green** success message.
+ *
+ * @return {String}
  * @api public
  */
 
 Verbalize.prototype.success = function () {
-  var args = _.toArray(arguments);
+  var args = [].slice.call(arguments);
   return this._formatStyles('green', args);
-};
-
-
-/**
- * ## .subhead
- *
- * @return {string}
- * @api public
- */
-
-Verbalize.prototype.subhead = function () {
-  var args = _.toArray(arguments);
-  return this._formatStyles('bold', args);
 };
 
 
 /**
  * ## .fatal
  *
- * @return {string}
+ * Display a **red** error message and exit with `process.exit(1)`
+
+ * @return {String}
  * @api public
  */
 
 Verbalize.prototype.fatal = function () {
-  var args = _.toArray(arguments);
-  args[0] = (chalk.red('  ' + this.runner + ' [FAIL]:') + chalk.gray(' · ') + args[0]);
+  var args = [].slice.call(arguments);
+  args[0] = (this.red('  ' + this.runner + ' [FAIL]:') + this.gray(' · ') + args[0]);
   console.log();
   console.log.apply(this, args);
   process.exit(1);
