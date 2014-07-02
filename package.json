@@ -25,7 +25,8 @@
     "test": "mocha --R spec"
   },
   "dependencies": {
-    "chalk": "~0.4.0"
+    "chalk": "~0.4.0",
+    "underscore.string": "^2.3.3"
   },
   "devDependencies": {
     "verb": "~0.1.20"

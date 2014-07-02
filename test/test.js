@@ -1,52 +1,98 @@
-var log = require('../');
+var _ = require('lodash');
+var Verbalize = require('../');
+var logger = new Verbalize({verbose: false, sep: ' :: '});
 
-/**
- * TODO: unit tests. this is a placeholder
- */
+var keys = _.methods(logger);
 
-log.mode.verbose = true;
+logger.set('runner', {
+  name: 'Verbalize',
+  url: 'https://github.com/jonschlinkert/verbalize'
+});
 
-log.info('this is info.');
-log.verbose.info('this is verbose info.');
-log.verbose.info('this is more verbose info.');
-
-
-log.mode.verbose = false;
+console.log(logger.get('runner'));
 
 
-log.magenta('foo');
+// console.log(logger)
+// logger.mode('verbose');
 
-log('This is a message');
-log.bold('This is a bold message');
-log.info('This is an info message');
-log.success('This is a success message');
-log.warn('This is a warning message');
-log.error('This is a error message');
+// logger.run('foo');
+// logger.success('foo');
+logger.error('foo');
 
 
-
-log.bold('>> This is', 'a bold message');
-log.info('>> This is', 'an info message');
-log.success('>> This is', 'a success message');
-log.warn('>> This is', 'a warning message');
-log.error('>> This is', 'a error message');
-
-
-
-log.verbose.bold('This is a bold verbose message');
-log.verbose.info('This is an info verbose message');
-log.verbose.success('This is a success verbose message');
-log.verbose.warn('This is a warning verbose message');
-log.verbose.error('This is a error verbose message');
-
-log.mode.verbose = true;
+var msg = [
+  'one',
+  'two',
+  'three'
+].join('\n');
+// logger.warn('foo', msg, logger.sep());
 
 
-log.verbose.bold('This is a bold verbose message');
-log.verbose.info('This is an info verbose message');
-log.verbose.success('This is a success verbose message');
-log.verbose.warn('This is a warning verbose message');
-log.verbose.error('This is a error verbose message');
+var colors = [
+  'bgBlack',
+  'bgBlue',
+  'bgCyan',
+  'bgGreen',
+  'bgMagenta',
+  'bgRed',
+  'bgWhite',
+  'bgYellow',
+  'black',
+  'blue',
+  'bold',
+  'cyan',
+  'gray',
+  'green',
+  'grey',
+  'inverse',
+  'italic',
+  'magenta',
+  'red',
+  'reset',
+  'strikethrough',
+  'underline',
+  'white',
+  'yellow'
+];
 
-// Fatal messages last
-log.verbose.fatal('This is a fatal verbose message');
+
+var exclude = [
+  '_addRunner',
+  '_format',
+  '_formatStyles',
+  '_mode',
+  '_write',
+  '_writeln',
+  'fatal',
+  'format',
+  'get',
+  'keys',
+  'mode',
+  'omit',
+  'options',
+  'sep',
+  'set',
+  'verbose'
+];
+
+var styles = _.difference(keys, colors, exclude);
+
+_.forEach(styles, function (style) {
+  logger[style]('This is style: ' + style);
+});
+
+
+// _.forEach(colors, function (color) {
+//   console.log('This is color:', logger[color](color));
+// });
+
+
+// if (logger._mode === 'verbose') {
+//   _.forEach(colors, function (color) {
+//     console.log('This is color:', logger.verbose[color](color), 'in verbose mode.');
+//   });
+
+//   _.forEach(styles, function (style) {
+//     console.log('This is style:', logger.verbose[style](style), 'in verbose mode.');
+//   });
+// }
