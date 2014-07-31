@@ -25,24 +25,44 @@
     "test": "mocha --R spec"
   },
   "dependencies": {
-    "chalk": "^0.4.0",
+    "ansi-styles": "^1.1.0",
+    "chalk": "^0.5.1",
     "lodash": "^2.4.1"
   },
   "devDependencies": {
-    "verb": "~0.1.20"
+    "mocha": "*",
+    "verb": "^0.2.14",
+    "verb-tag-jscomments": ">= 0.1.4"
   },
   "engines": {
     "node": ">=0.10.0",
     "npm": ">=1.2.10"
   },
   "keywords": [
-    "logging",
+    "256",
+    "ansi",
+    "chalk",
+    "cli",
+    "color",
+    "colors",
+    "colour",
+    "command",
+    "command-line",
+    "console",
+    "formatting",
+    "line",
     "log",
     "logger",
-    "terminal",
-    "command",
+    "logging",
     "message",
     "messages",
-    "command line"
+    "rgb",
+    "shell",
+    "string",
+    "styles",
+    "terminal",
+    "text",
+    "tty",
+    "xterm"
   ]
 }

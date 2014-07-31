@@ -5,10 +5,10 @@
  * Licensed under the MIT License
  */
 
-var expect = require('chai').expect;
+var should = require('should');
 var Verbalize = require('../');
 
-describe('when foo is passed:', function () {
+describe('verbalize:', function () {
   var logger;
   beforeEach(function() {
     logger = new Verbalize();

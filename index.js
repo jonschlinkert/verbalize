@@ -49,12 +49,13 @@ function Verbalize(options) {
   this._mode   = this.options.mode;
   this.verbose = {};
   this.cache = {};
+  this.color = {};
 
   // Expose chalk
   Object.keys(chalk.styles).map(function(color) {
     this[color] = function () {
       return chalk[color].apply(chalk, arguments);
-    };
+    }.bind(this);
   }.bind(this));
 
   // Expose verbose logging.
@@ -186,7 +187,7 @@ Verbalize.prototype.omit = function (arr) {
 
 Verbalize.prototype._write = function () {
   var args = _.flatten([].slice.call(arguments));
-  return process.stdout.write.apply(process.stdout, args);
+  process.stdout.write(util.format.apply(util, args));
 };
 
 
@@ -217,7 +218,7 @@ Verbalize.prototype._writeln = function (msg) {
 Verbalize.prototype._format = function (args) {
   args = _.toArray(args);
   if (args.length > 0) {
-    args[0] = String(args[0]);
+    args[0] = args[0].toString();
   }
   return util.format.apply(util, args);
 };
@@ -263,6 +264,52 @@ Verbalize.prototype.write = function () {
 
 
 /**
+ * ## .rainbow
+ *
+ * Why? Because I think we all deserve to have more
+ * egregiously annoying colors in the console.
+ *
+ * @return {String}
+ * @api public
+ */
+
+Verbalize.prototype.rainbow = function () {
+  var args = [].slice.call(arguments);
+  var colors = ['red', 'yellow', 'green', 'blue', 'magenta', 'bgRed', 'bgYellow', 'bgGreen', 'bgBlue', 'bgMagenta'];
+  var len = colors.length;
+
+  function tasteTheRainbow(str) {
+    return str.split('').map(function(ea, i) {
+      if (ea === ' ') {
+        return ea;
+      } else {
+        return chalk[colors[i++ % len]](ea);
+      }
+    }).join('');
+  }
+
+  args[0] = tasteTheRainbow.call(this, args[0]);
+  this._write(this._format(args));
+  return this;
+};
+
+
+/**
+ * ## .write
+ *
+ * Write output.
+ *
+ * @return {String}
+ * @api public
+ */
+
+Verbalize.prototype.wrap = function () {
+  this._write(this._format(arguments));
+  return this;
+};
+
+
+/**
  * ## .writeln
  *
  * Write a output followed by a newline.
@@ -301,11 +348,8 @@ Verbalize.prototype.sep = function (str) {
  */
 
 Verbalize.prototype.log = function () {
-  var args = [].slice.call(arguments, function (arg) {
-    return chalk.stripColor(arg);
-  });
-  args[0] = chalk.bold(args[0]);
-  return console.log.apply(this, args);
+  var args = [].slice.call(arguments);
+  return this._formatStyles('bold', args);
 };
 
 
@@ -410,7 +454,7 @@ Verbalize.prototype.warn = function () {
  */
 
 Verbalize.prototype.error = function () {
-  var args = _.toArray(arguments)
+  var args = [].slice.call(arguments);
   return this._formatStyles('red', args);
 };
 
