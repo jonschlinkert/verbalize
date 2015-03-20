@@ -63,9 +63,8 @@ function Verbalize(options) {
 
 util.inherits(Verbalize, Config);
 
-
 /**
- * [Strip color](https://github.com/sindresorhus/strip-ansi) from a string.
+ * [Strip color][strip-ansi] from a string.
  *
  * ```js
  * // using getter/setters
