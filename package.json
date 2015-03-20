@@ -31,9 +31,12 @@
     "test": "mocha"
   },
   "dependencies": {
-    "ansi-styles": "^1.1.0",
-    "chalk": "^0.5.1",
-    "lodash": "^2.4.1"
+    "chalk": "^1.0.0",
+    "class-extend": "^0.1.1",
+    "expander": "^0.3.3",
+    "getobject": "^0.1.0",
+    "lodash": "^3.5.0",
+    "should": "^5.2.0"
   },
   "devDependencies": {
     "mocha": "*"
