@@ -19,8 +19,7 @@
     "url": "https://github.com/jonschlinkert/verbalize/blob/master/LICENSE"
   },
   "files": [
-    "index.js",
-    "lib/"
+    "index.js"
   ],
   "main": "index.js",
   "engines": {
@@ -32,14 +31,11 @@
   },
   "dependencies": {
     "chalk": "^1.0.0",
-    "class-extend": "^0.1.1",
-    "expander": "^0.3.3",
-    "getobject": "^0.1.0",
-    "lodash": "^3.5.0",
-    "should": "^5.2.0"
+    "lodash": "^3.7.0"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "^2.2.4",
+    "should": "^6.0.1"
   },
   "keywords": [
     "256",
