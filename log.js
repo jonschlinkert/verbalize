@@ -10,7 +10,6 @@
 var util = require('util');
 var chalk = require('chalk');
 var _ = require('lodash');
-var Config = require('./lib/config');
 
 /**
  * Create a new instance of Verbalize.
@@ -30,62 +29,24 @@ function Verbalize(options) {
     return new Verbalize(options);
   }
 
-  Config.call(this);
-
   this.options = options || {};
   this._sep    = this.options.sep;
-  this._runner = this.options.runner;
   this._mode   = this.options.mode;
   this.verbose = {};
-  this.cache = {};
-  this.color = {};
-
-  Object.keys(chalk.styles).map(function(color) {
-    this[color] = function () {
-      return chalk[color].apply(chalk, arguments);
-    }.bind(this);
-  }.bind(this));
 
   // Expose verbose logging.
-  _.difference(this.keys(), this._omissions).filter(function(key) {
-    return typeof this[key] === 'function';
-  }.bind(this)).forEach(function(key) {
-    this.verbose[key] = function() {
-      if(this._mode === 'verbose') {
-        return this[key].apply(this, arguments);
-      } else {
-        return;
-      }
-    }.bind(this);
-  }.bind(this));
+  // _.difference(this.keys(), this._omissions).filter(function(key) {
+  //   return typeof this[key] === 'function';
+  // }.bind(this)).forEach(function(key) {
+  //   this.verbose[key] = function() {
+  //     if(this._mode === 'verbose') {
+  //       return this[key].apply(this, arguments);
+  //     } else {
+  //       return;
+  //     }
+  //   }.bind(this);
+  // }.bind(this));
 }
-
-util.inherits(Verbalize, Config);
-
-/**
- * [Strip color][strip-ansi] from a string.
- *
- * ```js
- * // using getter/setters
- * logger.stripColor = false;
- * logger.stripColor = true;
- *
- * // or enable/disable
- * logger.enable('stripColor');
- * logger.disable('stripColor');
- * ```
- *
- * @api public
- */
-
-Object.defineProperty(Verbalize.prototype, 'stripColor', {
-  set: function (value) {
-    Verbalize.prototype.set('stripColor', value);
-  }.bind(Verbalize.prototype),
-  get: function () {
-    return Verbalize.prototype.get('stripColor');
-  }.bind(Verbalize.prototype)
-});
 
 /**
  * Immutable colors array.
@@ -118,27 +79,14 @@ Verbalize.prototype.mode = function (mode) {
   this._mode = mode || 'normal';
 };
 
-/**
- * Pass an array of methods to omit from verbose logging.
- *
- * @param  {Array} `arr`
- * @return {Array}
- * @api public.
- */
+function write() {
+  var args = _.flatten([].slice.call(arguments));
+  var foo = util.format.apply(util, args);
+  console.log(foo)
+  // process.stdout.write(foo);
+}
 
-Verbalize.prototype.omit = function (arr) {
-  this._omissions = _.union([], [
-    '_format',
-    '_runner',
-    'fatal',
-    'mode',
-    'omit',
-    'options',
-    'runner',
-    'sep',
-    'verbose'
-  ], arr);
-};
+write('foo');
 
 /**
  * Write to the console.
@@ -148,7 +96,7 @@ Verbalize.prototype.omit = function (arr) {
 
 Verbalize.prototype._write = function () {
   var args = _.flatten([].slice.call(arguments));
-
+  console.log(args)
   process.stdout.write(util.format.apply(util, args));
 };
 
@@ -178,25 +126,6 @@ Verbalize.prototype._format = function (args) {
 };
 
 /**
- * Base formatting for special logging.
- *
- * @return {String}
- */
-
-Verbalize.prototype._formatStyle = function (color) {
-  var args = [].slice.call(arguments);
-  args[1] = this[color](args[1]);
-  args.shift();
-
-  return this._write(args.map(function (arg) {
-    if (this.enabled('stripColor')) {
-      return chalk.stripColor(arg);
-    }
-    return arg;
-  }.bind(this)));
-};
-
-/**
  * Write output.
  *
  * @return {String}
@@ -204,48 +133,6 @@ Verbalize.prototype._formatStyle = function (color) {
  */
 
 Verbalize.prototype.write = function () {
-  this._write(this._format(arguments));
-  return this;
-};
-
-/**
- * Why? Because I think we all deserve to have more
- * egregiously annoying colors in the console.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.rainbow = function () {
-  var args = [].slice.call(arguments);
-  var colors = this.colors.filter(function (ele) {
-    return ele.substr(0, 2) !== 'bg';
-  });
-
-  var len = colors.length;
-
-  function tasteTheRainbow(str) {
-    return str.split('').map(function(ele, i) {
-      if (ele === ' ') {
-        return ele;
-      } else {
-        return chalk[colors[i++ % len]](ele);
-      }
-    }).join('');
-  }
-
-  args[0] = tasteTheRainbow.call(this, args[0]);
-  return this._write(this._format(args));
-};
-
-/**
- * Write output.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.wrap = function () {
   this._write(this._format(arguments));
   return this;
 };
@@ -260,6 +147,25 @@ Verbalize.prototype.wrap = function () {
 Verbalize.prototype.writeln = function () {
   this._writeln(this._format(arguments));
   return this;
+};
+
+/**
+ * Base formatting for special logging.
+ *
+ * @return {String}
+ */
+
+Verbalize.prototype._formatStyle = function (color) {
+  var args = [].slice.call(arguments);
+  args[1] = chalk[color](args[1]);
+  args.shift();
+
+  return this._write(args.map(function (arg) {
+    // if (this.option('stripColor')) {
+    //   return chalk.stripColor(arg);
+    // }
+    return arg;
+  }.bind(this)));
 };
 
 /**

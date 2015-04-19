@@ -1,24 +1,29 @@
+'use strict';
+
 var _ = require('lodash');
-var Verbalize = require('../');
-var chalk = require('chalk');
-var logger = new Verbalize({verbose: false, sep: ' :: '});
+var Verbalize = require('../log');
 
-var keys = _.methods(logger);
+// var logger = new Verbalize({verbose: false, sep: ' :: '});
+var logger = new Verbalize({});
 
-logger.set('runner', {
-  name: 'Verbalize',
-  url: 'https://github.com/jonschlinkert/verbalize'
-});
+// var keys = _.methods(logger);
+
+// logger.set('runner', {
+//   name: 'Verbalize',
+//   url: 'https://github.com/jonschlinkert/verbalize'
+// });
 
 // console.log(logger.get('runner'));
 
-logger.rainbow('RAINBOW: https://github.com/jonschlinkert/verbalize');
+// logger.rainbow('RAINBOW: https://github.com/jonschlinkert/verbalize');
+
+logger._write('foo');
+
 
 // console.log(logger)
 // logger.mode('verbose');
 
 // logger.run('foo');
-// logger.success('foo');
 // logger.error('foo');
 // logger.color.error('foo');
 
