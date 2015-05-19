@@ -7,12 +7,7 @@
     "url": "https://github.com/jonschlinkert"
   },
   "homepage": "https://github.com/jonschlinkert/verbalize",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/jonschlinkert/verbalize/blob/master/LICENSE-MIT"
-    }
-  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/jonschlinkert/verbalize.git"
