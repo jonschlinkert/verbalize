@@ -7,21 +7,20 @@
 
 'use strict';
 
-var util = require('util');
+var utils = require('./lib/utils');
+var Emitter = require('component-emitter');
+var define = require('define-property');
 var chalk = require('chalk');
-var _ = require('lodash');
-var Config = require('./lib/config');
+var util = require('util');
+var use = require('use');
 
 /**
- * Create a new instance of Verbalize.
+ * Create an instance of `Verbalize` with the given `options`.
  *
  * ```js
  * var logger = new Verbalize({verbose: true});
  * ```
- *
- * @class `Verbalize`
- * @param {Object} options
- * @constructor
+ * @param {Object} `options`
  * @api public
  */
 
@@ -29,223 +28,98 @@ function Verbalize(options) {
   if (!(this instanceof Verbalize)) {
     return new Verbalize(options);
   }
-
-  Config.call(this);
-
+  define(this, 'cache', {});
   this.options = options || {};
-  this._sep    = this.options.sep;
-  this._runner = this.options.runner;
-  this._mode   = this.options.mode;
   this.verbose = {};
-  this.cache = {};
-  this.color = {};
-
-  Object.keys(chalk.styles).map(function(color) {
-    this[color] = function () {
-      return chalk[color].apply(chalk, arguments);
-    }.bind(this);
-  }.bind(this));
-
-  // Expose verbose logging.
-  _.difference(this.keys(), this._omissions).filter(function(key) {
-    return typeof this[key] === 'function';
-  }.bind(this)).forEach(function(key) {
-    this.verbose[key] = function() {
-      if(this._mode === 'verbose') {
-        return this[key].apply(this, arguments);
-      } else {
-        return;
-      }
-    }.bind(this);
-  }.bind(this));
+  use(this);
 }
 
-util.inherits(Verbalize, Config);
+/**
+ * Mixin emitter
+ */
+
+Emitter(Verbalize.prototype);
 
 /**
- * [Strip color][strip-ansi] from a string.
+ * Base formatting.
  *
- * ```js
- * // using getter/setters
- * logger.stripColor = false;
- * logger.stripColor = true;
- *
- * // or enable/disable
- * logger.enable('stripColor');
- * logger.disable('stripColor');
- * ```
- *
+ * @return {String} `msg`
  * @api public
  */
 
-Object.defineProperty(Verbalize.prototype, 'stripColor', {
-  set: function (value) {
-    Verbalize.prototype.set('stripColor', value);
-  }.bind(Verbalize.prototype),
-  get: function () {
-    return Verbalize.prototype.get('stripColor');
-  }.bind(Verbalize.prototype)
-});
-
-/**
- * Immutable colors array.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.colors = [
-  'bgBlue',
-  'bgGreen',
-  'bgMagenta',
-  'bgRed',
-  'bgYellow',
-  'blue',
-  'green',
-  'magenta',
-  'red',
-  'yellow'
-];
-
-/**
- * Handle logging modes.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.mode = function (mode) {
-  this._mode = mode || 'normal';
+Verbalize.prototype._format = function(args) {
+  if (typeof args === 'string') {
+    args = [args];
+  } if (!Array.isArray(args) && args.length) {
+    args = [].slice.call(args);
+  } else {
+    args = [].concat.apply([].slice.call(arguments));
+  }
+  if (args.length > 0) {
+    args[0] = String(args[0]);
+  }
+  return util.format.apply(util, args);
 };
 
 /**
- * Pass an array of methods to omit from verbose logging.
+ * Stylize the given `msg` with the specified `color`.
  *
- * @param  {Array} `arr`
- * @return {Array}
- * @api public.
+ * @param {String} `color` The name of the color to use
+ * @param {String} `msg` The args to stylize.
+ * @return {String}
  */
 
-Verbalize.prototype.omit = function (arr) {
-  this._omissions = _.union([], [
-    '_format',
-    '_runner',
-    'fatal',
-    'mode',
-    'omit',
-    'options',
-    'runner',
-    'sep',
-    'verbose'
-  ], arr);
+Verbalize.prototype.stylize = function(color, args) {
+  args = utils.arrayify(args);
+  var len = args.length;
+  var args = [];
+  var idx = 0;
+
+  var strip = this.options.stripColor === true;
+  while (++idx < len) {
+    var arg = arguments[idx];
+    if (strip) {
+      args.push(chalk.stripColor(arg));
+    } else {
+      args.push(arg);
+    }
+  }
+  return this._write.apply(this, args);
 };
 
 /**
  * Write to the console.
  *
- * @return {String}
+ * @return {String} `msg`
+ * @api public
  */
 
-Verbalize.prototype._write = function () {
-  var args = _.flatten([].slice.call(arguments));
-
-  process.stdout.write(util.format.apply(util, args));
+Verbalize.prototype._write = function(msg) {
+  process.stdout.write(utils.markup(msg || ''));
+  return this;
 };
 
 /**
  * Write to the console followed by a newline. A blank
  * line is returned if no value is passed.
  *
- * @return {String}
- */
-
-Verbalize.prototype._writeln = function (msg) {
-  this._write((msg || '') + '\n');
-};
-
-/**
- * Base formatting.
- *
- * @return {String}
- */
-
-Verbalize.prototype._format = function (args) {
-  args = _.toArray(args);
-  if (args.length > 0) {
-    args[0] = args[0].toString();
-  }
-  return util.format.apply(util, args);
-};
-
-/**
- * Base formatting for special logging.
- *
- * @return {String}
- */
-
-Verbalize.prototype._formatStyle = function (color) {
-  var args = [].slice.call(arguments);
-  args[1] = this[color](args[1]);
-  args.shift();
-
-  return this._write(args.map(function (arg) {
-    if (this.enabled('stripColor')) {
-      return chalk.stripColor(arg);
-    }
-    return arg;
-  }.bind(this)));
-};
-
-/**
- * Write output.
- *
- * @return {String}
+ * @return {String} `msg`
  * @api public
  */
 
-Verbalize.prototype.write = function () {
-  this._write(this._format(arguments));
+Verbalize.prototype._writeln = function(msg) {
+  this._write((msg || '') + '\n');
   return this;
 };
 
 /**
- * Why? Because I think we all deserve to have more
- * egregiously annoying colors in the console.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.rainbow = function () {
-  var args = [].slice.call(arguments);
-  var colors = this.colors.filter(function (ele) {
-    return ele.substr(0, 2) !== 'bg';
-  });
-
-  var len = colors.length;
-
-  function tasteTheRainbow(str) {
-    return str.split('').map(function(ele, i) {
-      if (ele === ' ') {
-        return ele;
-      } else {
-        return chalk[colors[i++ % len]](ele);
-      }
-    }).join('');
-  }
-
-  args[0] = tasteTheRainbow.call(this, args[0]);
-  return this._write(this._format(args));
-};
-
-/**
  * Write output.
  *
  * @return {String}
  * @api public
  */
 
-Verbalize.prototype.wrap = function () {
+Verbalize.prototype.write = function() {
   this._write(this._format(arguments));
   return this;
 };
@@ -257,7 +131,7 @@ Verbalize.prototype.wrap = function () {
  * @api public
  */
 
-Verbalize.prototype.writeln = function () {
+Verbalize.prototype.writeln = function() {
   this._writeln(this._format(arguments));
   return this;
 };
@@ -269,133 +143,38 @@ Verbalize.prototype.writeln = function () {
  * @api public
  */
 
-Verbalize.prototype.sep = function (str) {
-  return !this._sep
-    ? this.gray(str || ' · ')
-    : this._sep;
+Verbalize.prototype.sep = function(str) {
+  return this._sep || (this._sep = this.gray(str || ' · '));
 };
 
 /**
- * **bold** white message.
+ * Log a message.
  *
  * @return {String}
  * @api public
  */
 
-Verbalize.prototype.log = function () {
+Verbalize.prototype.log = function() {
   var args = [].slice.call(arguments);
-  return this._formatStyle('bold', args);
+  return this.stylize('white', args);
 };
 
 /**
- * **bold** white message.
+ * Define non-enumerable property `key` with the given value.
  *
+ * @param {String} `key`
+ * @param {any} `value`
  * @return {String}
  * @api public
  */
 
-Verbalize.prototype.subhead = function () {
-  var args = [].slice.call(arguments);
-  return this._formatStyle('bold', args);
+Verbalize.prototype.define = function(key, value) {
+  define(this, key, value);
+  return this;
 };
 
 /**
- * Get the current time using `.toLocaleTimeString()`.
- *
- * @return {String}
+ * Expose `Verbalize`
  */
-
-Verbalize.prototype.time = function () {
-  var time = new Date().toLocaleTimeString();
-  return chalk.bgBlack.white(time) + ' ';
-};
-
-/**
- * Display a **gray** timestamp.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.timestamp = function () {
-  var args = [].slice.call(arguments);
-  args[0] = this.time() + this.gray(args[0]);
-  return console.log.apply(this, args);
-};
-
-/**
- * Display a **gray** informational message.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.inform = function () {
-  var args = [].slice.call(arguments);
-  return this._formatStyle('gray', args);
-};
-
-/**
- * Display a **cyan** informational message.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.info = function () {
-  var args = [].slice.call(arguments);
-  return this._formatStyle('cyan', args);
-};
-
-/**
- * Display a **yellow** warning message.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.warn = function () {
-  var args = [].slice.call(arguments);
-  return this._formatStyle('yellow', args);
-};
-
-/**
- * Display a **red** error message.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.error = function () {
-  var args = [].slice.call(arguments);
-  return this._formatStyle('red', args);
-};
-
-/**
- * Display a **green** success message.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.success = function () {
-  var args = [].slice.call(arguments);
-  return this._formatStyle('green', args);
-};
-
-/**
- * Display a **red** error message and exit with `process.exit(1)`
-
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.fatal = function () {
-  var args = [].slice.call(arguments);
-  args[0] = (this.red('  ' + this.runner + ' [FAIL]:') + this.gray(' · ') + args[0]);
-  console.log();
-  console.log.apply(this, args);
-  process.exit(1);
-};
 
 module.exports = Verbalize;

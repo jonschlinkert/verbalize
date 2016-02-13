@@ -3,21 +3,12 @@
   "description": "A lightweight command line logging utility, with verbose mode and colors by chalk.",
   "version": "0.1.1",
   "homepage": "https://github.com/jonschlinkert/verbalize",
-  "author": {
-    "name": "Jon Schlinkert",
-    "url": "https://github.com/jonschlinkert"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jonschlinkert/verbalize.git"
-  },
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/verbalize",
   "bugs": {
     "url": "https://github.com/jonschlinkert/verbalize/issues"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/jonschlinkert/verbalize/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "files": [
     "index.js"
   ],
@@ -30,12 +21,20 @@
     "test": "mocha"
   },
   "dependencies": {
-    "chalk": "^1.0.0",
-    "lodash": "^3.7.0"
+    "ansi-bold": "^0.1.1",
+    "ansi-cyan": "^0.1.1",
+    "ansi-green": "^0.1.1",
+    "ansi-red": "^0.1.1",
+    "ansi-underline": "^0.1.1",
+    "ansi-yellow": "^0.1.1",
+    "chalk": "^1.1.1",
+    "component-emitter": "^1.2.0",
+    "define-property": "^0.2.5",
+    "minimist": "^1.2.0",
+    "use": "^1.1.2"
   },
   "devDependencies": {
-    "mocha": "^2.2.4",
-    "should": "^6.0.1"
+    "mocha": "*"
   },
   "keywords": [
     "256",
@@ -63,5 +62,13 @@
     "text",
     "tty",
     "xterm"
-  ]
+  ],
+  "verb": {
+    "related": {
+      "list": []
+    },
+    "reflinks": [
+      "strip-ansi"
+    ]
+  }
 }

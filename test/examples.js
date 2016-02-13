@@ -1,7 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
-var Verbalize = require('../log');
+var Verbalize = require('..');
 
 // var logger = new Verbalize({verbose: false, sep: ' :: '});
 var logger = new Verbalize({});
