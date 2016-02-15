@@ -32,7 +32,7 @@ function Verbalize(options) {
   if (!(this instanceof Verbalize)) {
     return new Verbalize(options);
   }
-  EventLogger.call(this);
+  // EventLogger.call(this);
   this.define('cache', {});
   this.options = options || {};
   this.verbose = {};
