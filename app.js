@@ -5,7 +5,7 @@ var yellow = require('ansi-yellow');
 var green = require('ansi-green');
 
 // event logger
-var EventLogger = require('./event-logger');
+var EventLogger = require('./lib/event-logger');
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {v: 'verbose'}
 });

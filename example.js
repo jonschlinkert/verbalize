@@ -10,6 +10,7 @@ logger.verbose = false;
 logger.write('red');
 logger.write('blue');
 logger.writeln('blue');
-logger.rainbow('blue');
+logger.rainbow('rainbow');
 // logger._formatStyle('red', 'bar');
 
+logger.log('foo bar')

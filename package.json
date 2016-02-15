@@ -10,7 +10,8 @@
   },
   "license": "MIT",
   "files": [
-    "index.js"
+    "index.js",
+    "utils.js"
   ],
   "main": "index.js",
   "engines": {
@@ -30,7 +31,10 @@
     "chalk": "^1.1.1",
     "component-emitter": "^1.2.0",
     "define-property": "^0.2.5",
+    "lazy-cache": "^1.0.3",
     "minimist": "^1.2.0",
+    "strip-color": "^0.1.0",
+    "time-diff": "^0.1.0",
     "use": "^1.1.2"
   },
   "devDependencies": {

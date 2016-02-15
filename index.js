@@ -7,12 +7,16 @@
 
 'use strict';
 
+var EventLogger = require('./lib/event-logger');
 var utils = require('./lib/utils');
-var Emitter = require('component-emitter');
-var define = require('define-property');
-var chalk = require('chalk');
 var util = require('util');
 var use = require('use');
+
+/**
+ * Expose `Verbalize`
+ */
+
+module.exports = Verbalize;
 
 /**
  * Create an instance of `Verbalize` with the given `options`.
@@ -28,17 +32,18 @@ function Verbalize(options) {
   if (!(this instanceof Verbalize)) {
     return new Verbalize(options);
   }
-  define(this, 'cache', {});
+  EventLogger.call(this);
+  this.define('cache', {});
   this.options = options || {};
   this.verbose = {};
   use(this);
 }
 
 /**
- * Mixin emitter
+ * Inherit EventLogger
  */
 
-Emitter(Verbalize.prototype);
+util.inherits(Verbalize, EventLogger);
 
 /**
  * Base formatting.
@@ -46,8 +51,7 @@ Emitter(Verbalize.prototype);
  * @return {String} `msg`
  * @api public
  */
-
-Verbalize.prototype._format = function(args) {
+function toArray(args) {
   if (typeof args === 'string') {
     args = [args];
   } if (!Array.isArray(args) && args.length) {
@@ -55,6 +59,12 @@ Verbalize.prototype._format = function(args) {
   } else {
     args = [].concat.apply([].slice.call(arguments));
   }
+  return args;
+}
+
+Verbalize.prototype._format = function(args) {
+  args = toArray.apply(null, arguments);
+
   if (args.length > 0) {
     args[0] = String(args[0]);
   }
@@ -70,21 +80,21 @@ Verbalize.prototype._format = function(args) {
  */
 
 Verbalize.prototype.stylize = function(color, args) {
-  args = utils.arrayify(args);
+  args = toArray(args);
   var len = args.length;
-  var args = [];
-  var idx = 0;
+  var res = [];
+  var idx = -1;
 
   var strip = this.options.stripColor === true;
   while (++idx < len) {
-    var arg = arguments[idx];
+    var arg = args[idx];
     if (strip) {
-      args.push(chalk.stripColor(arg));
+      res.push(utils.stripColor(arg));
     } else {
-      args.push(arg);
+      res.push(arg);
     }
   }
-  return this._write.apply(this, args);
+  return this.write.apply(this, res);
 };
 
 /**
@@ -108,8 +118,7 @@ Verbalize.prototype._write = function(msg) {
  */
 
 Verbalize.prototype._writeln = function(msg) {
-  this._write((msg || '') + '\n');
-  return this;
+  return this._write((msg || '') + '\n');
 };
 
 /**
@@ -120,8 +129,7 @@ Verbalize.prototype._writeln = function(msg) {
  */
 
 Verbalize.prototype.write = function() {
-  this._write(this._format(arguments));
-  return this;
+  return this._write(this._format(arguments));
 };
 
 /**
@@ -132,8 +140,7 @@ Verbalize.prototype.write = function() {
  */
 
 Verbalize.prototype.writeln = function() {
-  this._writeln(this._format(arguments));
-  return this;
+  return this._writeln(this._format(arguments));
 };
 
 /**
@@ -155,8 +162,7 @@ Verbalize.prototype.sep = function(str) {
  */
 
 Verbalize.prototype.log = function() {
-  var args = [].slice.call(arguments);
-  return this.stylize('white', args);
+  return this.stylize('white', arguments);
 };
 
 /**
@@ -169,12 +175,6 @@ Verbalize.prototype.log = function() {
  */
 
 Verbalize.prototype.define = function(key, value) {
-  define(this, key, value);
+  utils.define(this, key, value);
   return this;
 };
-
-/**
- * Expose `Verbalize`
- */
-
-module.exports = Verbalize;

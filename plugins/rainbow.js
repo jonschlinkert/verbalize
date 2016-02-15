@@ -21,6 +21,7 @@ module.exports = function(options) {
         'blue',
         'cyan',
         'magenta',
+        'bold',
         'white'
       ];
 
