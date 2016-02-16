@@ -34,6 +34,17 @@ module.exports = function(options) {
     });
 
     /**
+     * Log a message.
+     *
+     * @return {String}
+     * @api public
+     */
+
+    this.style('log', function() {
+      return this.stylize('white', arguments);
+    });
+
+    /**
      * **bold** message.
      *
      * @return {String}

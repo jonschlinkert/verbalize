@@ -189,17 +189,6 @@ Verbalize.prototype.sep = function(str) {
 };
 
 /**
- * Log a message.
- *
- * @return {String}
- * @api public
- */
-
-Verbalize.prototype.log = function() {
-  return this.stylize('white', arguments);
-};
-
-/**
  * Define non-enumerable property `key` with the given value.
  *
  * @param {String} `key`
