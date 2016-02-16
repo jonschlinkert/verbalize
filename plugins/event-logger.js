@@ -43,7 +43,6 @@ module.exports = function(options) {
       console.log.apply(console, arguments);
     });
 
-    // this.define('logger', logger);
     this.define('log', function() {
       var args = ['default'].concat([].slice.call(arguments));
       return logger.log.apply(logger, args);
