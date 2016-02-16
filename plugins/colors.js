@@ -1,6 +1,22 @@
 'use strict';
 
-module.exports = {
+module.exports = function(options) {
+  return function(app) {
+    for (var key in styles) {
+      createMethod(this, key, styles[key]);
+    }
+  };
+
+  function createMethod(app, key, style) {
+    if (style.open) {
+      app.style(key, function(msg) {
+        return style.open + msg + style.close;
+      });
+    }
+  }
+};
+
+var styles = {
   modifiers: {
     reset: {
       open: '\u001b[0m',
