@@ -25,30 +25,30 @@ function App(options) {
   this.use(verbose());
 
   // use styles plugin on the logger
-  this.log.use(styles());
+  this.logger.use(styles());
 }
 
 Base.extend(App);
 
 var app = new App(argv);
 
-app.log.method('verbose', function(context) {
+app.logger.method('verbose', function(context) {
   context.write = this.options.verbose === true;
 });
 
-app.log.method('notverbose', function(context) {
+app.logger.method('notverbose', function(context) {
   context.write = this.options.verbose === false;
 });
 
 console.log('---------- USING log ----------');
 console.log();
 
-app.log
+app.logger
   .verbose.info('verbose')
   .notverbose.info('notverbose')
   .writeln();
 
-app.log
+app.logger
   .verbose.subhead('--- VERBOSE INFO---').notverbose('--- IMPORTANT INFO ---')
   .verbose.inform('inform')
   .verbose.info('info')
@@ -77,6 +77,9 @@ app
   .verbose.error('error').notverbose.error('error')
   .verbose.success('success').notverbose.success('success')
   .writeln();
+
+app.warn.verbose('warn.verbose')
+   .info.notverbose('info.notverbose');
 
 console.log('-------------------------------');
 console.log();

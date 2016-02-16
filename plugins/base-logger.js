@@ -14,15 +14,15 @@ module.exports = function(options) {
         enumerable: true,
         configurable: true,
         get: function() {
-          return this.log[name];
+          return this.logger[name];
         }
       });
     });
 
-    this.define('log', function() {
+    this.define('logger', function() {
       return logger.log.apply(logger, args);
     });
 
-    this.log.__proto__ = logger;
+    this.logger.__proto__ = logger;
   };
 };
