@@ -1,17 +1,36 @@
 'use strict';
 
+var utils = require('../lib/utils');
+var colors = require('./colors');
+
 module.exports = function(options) {
   return function() {
+    this.use(colors());
 
     /**
-     * Style a **bold** message.
+     * Stylize the given `msg` with the specified `color`.
      *
+     * @param {String} `color` The name of the color to use
+     * @param {String} `msg` The args to stylize.
      * @return {String}
-     * @api public
      */
 
-    this.define('bold', function() {
-      return this.stylize('bold', arguments);
+    this.define('stylize', function(color, args) {
+      args = utils.toArray(args);
+      var len = args.length;
+      var res = [];
+      var idx = -1;
+
+      var strip = this.options.stripColor === true;
+      while (++idx < len) {
+        var arg = args[idx];
+        if (strip) {
+          res.push(utils.stripColor(arg));
+        } else {
+          res.push(this[color](arg));
+        }
+      }
+      return res;
     });
 
     /**
@@ -21,7 +40,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('subhead', function() {
+    this.style('subhead', function() {
       return this.stylize('bold', arguments);
     });
 
@@ -31,9 +50,9 @@ module.exports = function(options) {
      * @return {String}
      */
 
-    this.define('time', function() {
+    this.style('time', function() {
       var time = new Date().toLocaleTimeString();
-      return chalk.bgBlack.white(time) + ' ';
+      return this.bgBlack.white(time) + ' ';
     });
 
     /**
@@ -43,10 +62,10 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('timestamp', function() {
+    this.style('timestamp', function() {
       var args = [].slice.call(arguments);
       args[0] = this.time() + this.gray(args[0]);
-      return console.log.apply(this, args);
+      return args;
     });
 
     /**
@@ -56,7 +75,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('inform', function() {
+    this.style('inform', function() {
       return this.stylize('gray', arguments);
     });
 
@@ -67,7 +86,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('info', function() {
+    this.style('info', function() {
       return this.stylize('cyan', arguments);
     });
 
@@ -78,7 +97,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('warn', function() {
+    this.style('warn', function() {
       return this.stylize('yellow', arguments);
     });
 
@@ -89,7 +108,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('error', function() {
+    this.style('error', function() {
       return this.stylize('red', arguments);
     });
 
@@ -100,7 +119,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('success', function() {
+    this.style('success', function() {
       return this.stylize('green', arguments);
     });
 
@@ -111,7 +130,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.define('fatal', function() {
+    this.style('fatal', function() {
       var args = [].slice.call(arguments);
       args[0] = (this.red('  ' + this.runner + ' [FAIL]:') + this.gray(' · ') + args[0]);
       console.log();
