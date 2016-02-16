@@ -7,7 +7,7 @@
 
 'use strict';
 
-var EventLogger = require('./lib/event-logger');
+var Emitter = require('component-emitter');
 var utils = require('./lib/utils');
 var util = require('util');
 var use = require('use');
@@ -32,18 +32,88 @@ function Verbalize(options) {
   if (!(this instanceof Verbalize)) {
     return new Verbalize(options);
   }
-  // EventLogger.call(this);
   this.define('cache', {});
+  this.define('stack', []);
+  this.define('invoking', false);
   this.options = options || {};
-  this.verbose = {};
   use(this);
 }
 
 /**
- * Inherit EventLogger
+ * Mixin `Emitter` prototype methods
  */
 
-util.inherits(Verbalize, EventLogger);
+Emitter(Verbalize.prototype);
+
+Verbalize.prototype.method = function(name, fn) {
+  utils.set(this.cache, ['methods', name], fn);
+  this.addMethod(name, 'methods', function() {
+    if (this.invoking) {
+      return fn.apply(this, arguments);
+    }
+    return this.invoke(arguments);
+  }.bind(this));
+};
+
+Verbalize.prototype.style = function(name, fn) {
+  utils.set(this.cache, ['styles', name], fn);
+  this.addMethod(name, 'styles', function() {
+    if (this.invoking) {
+      return fn.apply(this, arguments);
+    }
+    return this.invoke(arguments);
+  }.bind(this));
+};
+
+Verbalize.prototype.addMethod = function(name, type, fn) {
+  fn.__proto__ = this;
+  this.define(name, {
+    enumerable: true,
+    configurable: true,
+    get: function() {
+      this.stack.push({
+        type: type,
+        name: name,
+        fn: utils.get(this.cache, [type, name])
+      });
+      return fn;
+    }
+  });
+  this.emit('addMethod', name);
+};
+
+Verbalize.prototype.invoke = function(args) {
+  this.invoking = true;
+  var context = {
+    stack: this.stack,
+    args: args,
+    write: true
+  };
+
+  var len = this.stack.length, i = -1;
+  var res = args[0];
+
+  while(++i < len) {
+    var ctx = this.stack[i];
+    switch(ctx.type) {
+      case 'styles':
+        res = ctx.fn.call(this, res);
+        break;
+
+      case 'methods':
+      default: {
+        ctx.fn.call(this, context);
+      }
+    }
+    if (context.write === false) break;
+  }
+  if (context.write) {
+    this.writeln.apply(this, [res]);
+  }
+  this.stack = [];
+  this.invoking = false;
+  return this;
+};
 
 /**
  * Base formatting.
@@ -51,50 +121,14 @@ util.inherits(Verbalize, EventLogger);
  * @return {String} `msg`
  * @api public
  */
-function toArray(args) {
-  if (typeof args === 'string') {
-    args = [args];
-  } if (!Array.isArray(args) && args.length) {
-    args = [].slice.call(args);
-  } else {
-    args = [].concat.apply([].slice.call(arguments));
-  }
-  return args;
-}
 
 Verbalize.prototype._format = function(args) {
-  args = toArray.apply(null, arguments);
+  args = utils.toArray.apply(null, arguments);
 
   if (args.length > 0) {
     args[0] = String(args[0]);
   }
   return util.format.apply(util, args);
-};
-
-/**
- * Stylize the given `msg` with the specified `color`.
- *
- * @param {String} `color` The name of the color to use
- * @param {String} `msg` The args to stylize.
- * @return {String}
- */
-
-Verbalize.prototype.stylize = function(color, args) {
-  args = toArray(args);
-  var len = args.length;
-  var res = [];
-  var idx = -1;
-
-  var strip = this.options.stripColor === true;
-  while (++idx < len) {
-    var arg = args[idx];
-    if (strip) {
-      res.push(utils.stripColor(arg));
-    } else {
-      res.push(arg);
-    }
-  }
-  return this.write.apply(this, res);
 };
 
 /**
