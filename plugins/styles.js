@@ -8,32 +8,6 @@ module.exports = function(options) {
     this.use(colors());
 
     /**
-     * Stylize the given `msg` with the specified `color`.
-     *
-     * @param {String} `color` The name of the color to use
-     * @param {String} `msg` The args to stylize.
-     * @return {String}
-     */
-
-    this.define('stylize', function(color, args) {
-      args = utils.toArray(args);
-      var len = args.length;
-      var res = [];
-      var idx = -1;
-
-      var strip = this.options.stripColor === true;
-      while (++idx < len) {
-        var arg = args[idx];
-        if (strip) {
-          res.push(utils.stripColor(arg));
-        } else {
-          res.push(this[color](arg));
-        }
-      }
-      return res;
-    });
-
-    /**
      * Log a message.
      *
      * @return {String}
