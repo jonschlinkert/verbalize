@@ -21,17 +21,17 @@ logger.use(styles());
 logger.use(isEnabled());
 
 logger.define('process', function(stats) {
-  if (this.isEnabled(stats.mode)) {
-    var res = stats.style.reduce(function(acc, style) {
-      acc = this.stylize(style, acc);
+  if (this.isEnabled(stats.modifiers)) {
+    var res = stats.loggers.reduce(function(acc, loggers) {
+      acc = this.stylize(loggers, acc);
       return acc;
     }.bind(this), stats.args);
     this.writeln.apply(this, res);
   }
 });
 
-// logger modes
-logger.modes(['verbose', 'not']);
+// logger modifiers
+logger.modifiers(['verbose', 'not']);
 
 logger.on('*', function(stats) {
   this.process(stats);
@@ -52,4 +52,10 @@ logger
   .verbose.warn('warn')
   .verbose.error('error').not.verbose.error('error')
   .verbose.success('success').not.verbose.success('success')
+  .writeln();
+
+logger
+  .verbose.red.subhead('--- VERBOSE INFO---').not.verbose.subhead('--- IMPORTANT INFO ---')
+  .verbose.inform.info.warn.error.success('some verbose information')
+  .not.verbose.error.success('some not verbose information')
   .writeln();
