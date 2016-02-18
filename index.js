@@ -7,7 +7,7 @@
 
 'use strict';
 
-var Logger = require('./lib/event-logger');
+var Logger = require('./lib/logger-events');
 var utils = require('./lib/utils');
 var util = require('util');
 var use = require('use');
