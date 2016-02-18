@@ -32,7 +32,9 @@ Logger.prototype.init = function() {
   this.styles = {};
   this.modes = {};
 
-  this.create('success', '0', this.green);
+  this.create('success', '0', this.green, {
+    template: '...'
+  });
   this.create('debug', '0');
   this.create('info', '1', this.cyan);
   this.create('warn', '2', this.yellow);
@@ -82,7 +84,7 @@ Logger.prototype.create = function(name, level, style) {
   this.methods[name] = { level: level, style: style };
   Logger.prototype[name] = function() {
     var args = [].slice.call(arguments);
-    this._emit(name, level, args)
+    this._emit(name, level, args);
     args[0] = this.stylize(args[0], name);
     this.write.apply(this, args);
   }.bind(this);

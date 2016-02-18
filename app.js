@@ -78,6 +78,20 @@ for (var key in argv) {
 // logger modes
 app.log.modes(['always', 'verbose', 'notverbose']);
 
+var positives = ['yes'];
+var negatives = ['no'];
+
+function toggle() {
+  positives.forEach(function(key) {
+    app[key] = true
+  })
+}
+
+app.log.operator('not', function() {
+  this.toggle();
+  return this;
+});
+
 // logger methods
 app.log.create('info');
 app.log.create('warn');
@@ -92,7 +106,7 @@ Object.keys(app.log.methods).forEach(function(method) {
 });
 
 // actual logging examples
-app.log.info('this is info');
+// app.log.info('this is info').or.notverbose.info('not verbose');
 app.log.success('this is success');
 app.log.warn('this is warn');
 app.log.error('this is error');
@@ -105,3 +119,9 @@ app.log.verbose.error('this is error');
 app.log.verbose.write('this is write');
 app.log.verbose.writeln('this is writeln');
 
+app.options.verbose = true;
+app.log.verbose.info('this is info').not.verbose.info('this is not verbose');
+
+app.options.verbose = false;
+app.options.notverbose = true;
+app.log.verbose.info('this is info').not.verbose.info('this is not verbose');

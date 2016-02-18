@@ -9,7 +9,7 @@ var argv = require('minimist')(process.argv.slice(2), {
 var Base = require('base');
 var option = require('base-option');
 
-var verbose = require('./plugins/base-logger');
+var verbalize = require('./plugins/base-logger');
 var styles = require('./plugins/styles');
 var utils = require('./lib/utils');
 
@@ -22,7 +22,7 @@ function App(options) {
   this.use(option());
 
   // use verbose logger plugin
-  this.use(verbose());
+  this.use(verbalize());
 
   // use styles plugin on the logger
   this.logger.use(styles());
@@ -49,7 +49,7 @@ app.logger
   .writeln();
 
 app.logger
-  .verbose.subhead('--- VERBOSE INFO---').notverbose('--- IMPORTANT INFO ---')
+  .verbose.subhead('--- VERBOSE INFO---').not.verbose.subhead('--- IMPORTANT INFO ---')
   .verbose.inform('inform')
   .verbose.info('info')
   .verbose.warn('warn')
@@ -62,7 +62,6 @@ console.log();
 
 console.log('---------- USING app ----------');
 console.log();
-
 
 app
   .verbose.info('verbose')

@@ -28,7 +28,7 @@ logger
   .writeln();
 
 logger
-  .verbose.subhead('--- VERBOSE INFO---').notverbose('--- IMPORTANT INFO ---')
+  .verbose.error.foo('--- VERBOSE INFO---').not.notverbose.subhead('--- IMPORTANT INFO ---')
   .verbose.inform('inform')
   .verbose.info('info')
   .verbose.warn('warn')
