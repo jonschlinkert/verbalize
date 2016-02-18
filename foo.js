@@ -33,8 +33,6 @@ logger.create('info');
 logger.create('warn');
 logger.create('error');
 logger.create('success');
-logger.create('write');
-logger.create('writeln');
 
 logger.on('info', function(stats) {
   if (this.isEnabled(stats.mode)) {
