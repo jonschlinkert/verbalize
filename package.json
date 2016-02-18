@@ -32,6 +32,7 @@
     "component-emitter": "^1.2.0",
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
+    "falsey": "^0.3.0",
     "get-value": "^2.0.3",
     "lazy-cache": "^1.0.3",
     "minimist": "^1.2.0",

@@ -2,23 +2,29 @@
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {
     v: 'verbose'
-  },
-  boolean: ['verbose']
+  }
 });
+
+var falseWords = ['none', 'nil', 'nope', 'no', 'not', 'nada', '0', 'false'];
+var falsey = require('falsey');
+
+if (argv.hasOwnProperty('verbose') && falsey(argv.verbose, falseWords)) {
+  argv.verbose = false;
+}
 
 var utils = require('./lib/utils');
 var Verbalize = require('./');
 var colors = require('./plugins/colors');
 var styles = require('./plugins/styles');
 
-var logger = new Verbalize(utils.extend({verbose: false}, argv));
+var logger = new Verbalize(utils.extend({}, argv));
 logger.use(colors());
 logger.use(styles());
 logger.define('isEnabled', function(modes) {
   if (!modes) return true;
   var comparison = true;
   var mode = modes.split('.').filter(function(m) {
-    if (m === 'not') {
+    if (falsey(m, falseWords)) {
       comparison = !comparison;
       return false;
     }
