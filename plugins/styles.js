@@ -1,23 +1,9 @@
 'use strict';
 
 var utils = require('../lib/utils');
-var colors = require('./colors');
 
 module.exports = function(options) {
   return function() {
-    this.use(colors());
-
-    /**
-     * Log a message.
-     *
-     * @return {String}
-     * @api public
-     */
-
-    this.style('log', function() {
-      return this.stylize('white', arguments);
-    });
-
     /**
      * **bold** message.
      *
