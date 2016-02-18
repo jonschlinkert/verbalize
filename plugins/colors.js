@@ -16,7 +16,7 @@ module.exports = function(options) {
   }
 };
 
-var styles = {
+var styles = module.exports.styles = {
   modifiers: {
     reset: {
       open: '\u001b[0m',
