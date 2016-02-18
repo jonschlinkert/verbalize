@@ -117,6 +117,11 @@ Verbalize.prototype.sep = function(str) {
   return this._sep || (this._sep = this.stylize('gray', str || ' · '));
 };
 
+Verbalize.prototype.style = function(name, fn) {
+  utils.set(this.cache, ['styles', name], fn);
+  return this.create(name);
+};
+
 /**
  * Stylize the given `msg` with the specified `color`.
  *
@@ -137,8 +142,9 @@ Verbalize.prototype.stylize = function(color, args) {
     if (strip) {
       res.push(utils.stripColor(arg));
     } else {
-      if (this.hasOwnProperty(color)) {
-        res.push(this[color](arg));
+      var fn = utils.get(this.cache, ['styles', color]);
+      if (fn) {
+        res.push(fn.call(this, arg));
       } else {
         res.push(arg);
       }
