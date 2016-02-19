@@ -84,3 +84,8 @@ logger
 
 logger.green('use a style directly');
 logger.debug.yellow('this is a debug option');
+
+logger.verbose('this is directly in verbose')
+  .not.verbose('this is directly in not verbose')
+  .debug('this is directly in debug')
+  .not.debug('this is directly in not debug');
