@@ -112,7 +112,7 @@ module.exports = function(options) {
      * @api public
      */
 
-    this.style('fatal', {type: 'logger'}, function() {
+    this.style('fail', {type: 'logger'}, function() {
       var args = [].slice.call(arguments);
       args[0] = (this.red('  ' + this.runner + ' [FAIL]:') + this.gray(' · ') + args[0]);
       console.log();
