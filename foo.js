@@ -1,13 +1,17 @@
 // 'use strict';
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {
-    v: 'verbose'
+    v: 'verbose',
+    d: 'debug'
   }
 });
 
 var utils = require('./lib/utils');
 if (argv.hasOwnProperty('verbose') && utils.isFalsey(argv.verbose)) {
   argv.verbose = false;
+}
+if (argv.hasOwnProperty('debug') && utils.isFalsey(argv.debug)) {
+  argv.debug = false;
 }
 
 var Verbalize = require('./');
@@ -26,17 +30,30 @@ logger.define('process', function(stats) {
   });
 
   if (this.isEnabled(modes)) {
-    var res = stats.modifiers.reduce(function(acc, modifier) {
-      acc = this.stylize(modifier, acc);
-      return acc;
-    }.bind(this), stats.args);
+    var res = stats.modes.reduce(function(acc, mode) {
+      return mode.fn(acc);
+    }, stats.args);
+    res = stats.modifiers.reduce(function(acc, modifier) {
+      return this.stylize(modifier, acc);
+    }.bind(this), res);
     this.writeln.apply(this, res);
   }
 });
 
-// logger modes
+/**
+ * Logger modes
+ */
+
+// just an option setting
 logger.mode('verbose');
+
+// use this as a negative value
 logger.mode('not', {type: 'negative'});
+
+// option setting but allows modifying the content
+logger.mode('debug', function(msg) {
+  return '[debug]: ' + msg;
+});
 
 logger.on('*', function(stats) {
   this.process(stats);
@@ -64,3 +81,6 @@ logger
   .verbose.yellow.inform.info.warn.error.success('some verbose information')
   .not.verbose.error.success('some not verbose information')
   .writeln();
+
+logger.green('use a style directly');
+logger.debug.yellow('this is a debug option');
