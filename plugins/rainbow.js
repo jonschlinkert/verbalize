@@ -1,7 +1,5 @@
 'use strict';
 
-var chalk = require('chalk');
-
 /**
  * Why? Because we all deserve to have more
  * color in the console.
@@ -12,7 +10,7 @@ var chalk = require('chalk');
 
 module.exports = function(options) {
   return function(app) {
-    app.define('rainbow', function() {
+    app.style('rainbow', function() {
       var args = [].slice.call(arguments);
       var colors = [
         'red',
@@ -32,13 +30,13 @@ module.exports = function(options) {
           if (ele === ' ') {
             return ele;
           } else {
-            return chalk[colors[i++ % len]](ele);
+            return app.stylize(colors[i++ % len], ele);
           }
         }).join('');
       }
 
       args[0] = tasteTheRainbow.call(this, args[0]);
-      return this._write(this._format(args) + '\n');
+      return args;
     });
   };
 };
