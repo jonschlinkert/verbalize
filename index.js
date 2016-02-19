@@ -117,9 +117,13 @@ Verbalize.prototype.sep = function(str) {
   return this._sep || (this._sep = this.stylize('gray', str || ' · '));
 };
 
-Verbalize.prototype.style = function(name, fn) {
-  utils.set(this.cache, ['styles', name], fn);
-  return this.create(name);
+Verbalize.prototype.style = function(name, options, fn) {
+  if (typeof options === 'function') {
+    fn = options;
+    options = {};
+  }
+  var opts = utils.extend({type: ['modifier'], fn: fn}, options);
+  return this.create(name, opts);
 };
 
 /**
@@ -142,9 +146,14 @@ Verbalize.prototype.stylize = function(color, args) {
     if (strip) {
       res.push(utils.stripColor(arg));
     } else {
-      var fn = utils.get(this.cache, ['styles', color]);
-      if (fn) {
-        res.push(fn.call(this, arg));
+      var modifier = null;
+      if (typeof color === 'string') {
+        modifier = utils.get(this.modifiers, [color]);
+      } else {
+        modifier = color;
+      }
+      if (modifier) {
+        res.push(modifier.fn.call(this, arg));
       } else {
         res.push(arg);
       }
