@@ -11,6 +11,17 @@ module.exports = function(options) {
      * @api public
      */
 
+    this.style('log', {type: 'logger'}, function() {
+      return this.stylize('bold', arguments);
+    });
+
+    /**
+     * **bold** message.
+     *
+     * @return {String}
+     * @api public
+     */
+
     this.style('subhead', {type: 'logger'}, function() {
       return this.stylize('bold', arguments);
     });
