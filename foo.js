@@ -17,11 +17,13 @@ if (argv.hasOwnProperty('debug') && utils.isFalsey(argv.debug)) {
 var Verbalize = require('./');
 var colors = require('./plugins/colors');
 var styles = require('./plugins/styles');
+var rainbow = require('./plugins/rainbow');
 var isEnabled = require('./plugins/is-enabled');
 
 var logger = new Verbalize(utils.extend({}, argv));
 logger.use(colors());
 logger.use(styles());
+logger.use(rainbow());
 logger.use(isEnabled());
 
 logger.define('process', function(stats) {
@@ -49,6 +51,7 @@ logger.mode('verbose');
 
 // use this as a negative value
 logger.mode('not', {type: 'negative'});
+logger.mode('or', {type: 'negative'});
 
 // option setting but allows modifying the content
 logger.mode('debug', function(msg) {
@@ -56,6 +59,12 @@ logger.mode('debug', function(msg) {
 });
 
 logger.on('*', function(stats) {
+  // console.log(stats);
+  // if (stats.hasMode('debug')) {
+  //   debug('base:' + stats.name).apply(null, stats.args);
+  //   return;
+  // }
+
   this.process(stats);
 });
 
@@ -89,3 +98,6 @@ logger.verbose('this is directly in verbose')
   .not.verbose('this is directly in not verbose')
   .debug('this is directly in debug')
   .not.debug('this is directly in not debug');
+
+
+logger.rainbow('this is a rainbow!!!!');
