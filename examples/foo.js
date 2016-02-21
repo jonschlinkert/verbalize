@@ -6,7 +6,7 @@ var argv = require('minimist')(process.argv.slice(2), {
   }
 });
 
-var utils = require('./lib/utils');
+var utils = require('../lib/utils');
 if (argv.hasOwnProperty('verbose') && utils.isFalsey(argv.verbose)) {
   argv.verbose = false;
 }
@@ -14,11 +14,11 @@ if (argv.hasOwnProperty('debug') && utils.isFalsey(argv.debug)) {
   argv.debug = false;
 }
 
-var Verbalize = require('./');
-var colors = require('./plugins/colors');
-var styles = require('./plugins/styles');
-var rainbow = require('./plugins/rainbow');
-var isEnabled = require('./plugins/is-enabled');
+var Verbalize = require('../');
+var colors = require('../plugins/other-colors');
+var styles = require('../plugins/styles');
+var rainbow = require('../plugins/rainbow');
+var isEnabled = require('../plugins/is-enabled');
 
 var logger = new Verbalize(utils.extend({}, argv));
 logger.use(colors());
