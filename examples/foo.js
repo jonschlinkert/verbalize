@@ -15,32 +15,10 @@ if (argv.hasOwnProperty('debug') && utils.isFalsey(argv.debug)) {
 }
 
 var Verbalize = require('../');
-var colors = require('../plugins/other-colors');
-var styles = require('../plugins/styles');
 var rainbow = require('../plugins/rainbow');
-var isEnabled = require('../plugins/is-enabled');
 
 var logger = new Verbalize(utils.extend({}, argv));
-logger.use(colors());
-logger.use(styles());
 logger.use(rainbow());
-logger.use(isEnabled());
-
-logger.define('process', function(stats) {
-  var modes = stats.modes.map(function(mode) {
-    return mode.name;
-  });
-
-  if (this.isEnabled(modes)) {
-    var res = stats.modes.reduce(function(acc, mode) {
-      return mode.fn(acc);
-    }, stats.args);
-    res = stats.modifiers.reduce(function(acc, modifier) {
-      return this.stylize(modifier, acc);
-    }.bind(this), res);
-    this.writeln.apply(this, res);
-  }
-});
 
 /**
  * Logger modes
@@ -49,9 +27,9 @@ logger.define('process', function(stats) {
 // just an option setting
 logger.mode('verbose');
 
-// use this as a negative value
-logger.mode('not', {type: 'negative'});
-logger.mode('or', {type: 'negative'});
+// use this as a toggle value
+logger.mode('not', {type: 'toggle'});
+logger.mode('or', {type: 'toggle'});
 
 // option setting but allows modifying the content
 logger.mode('debug', function(msg) {
@@ -65,7 +43,7 @@ logger.on('*', function(stats) {
   //   return;
   // }
 
-  this.process(stats);
+  this.handle(stats);
 });
 
 logger
