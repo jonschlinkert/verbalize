@@ -9,7 +9,7 @@ module.exports = function(options) {
     var logger = new Verbalize();
     logger.options = app.options;
 
-    logger.on('addMethod', function(name) {
+    function addMethod(name) {
       app.define(name, {
         enumerable: true,
         configurable: true,
@@ -17,7 +17,10 @@ module.exports = function(options) {
           return this.logger[name];
         }
       });
-    });
+    }
+
+    logger.on('addLogger', addMethod);
+    logger.on('addMode', addMethod);
 
     this.define('logger', function() {
       return logger.log.apply(logger, args);

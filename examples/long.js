@@ -25,14 +25,14 @@ logger.use(rainbow());
  */
 
 // just an option setting
-logger.mode('verbose');
+logger.addMode('verbose');
 
 // use this as a toggle value
-logger.mode('not', {type: 'toggle'});
-logger.mode('or', {type: 'toggle'});
+logger.addMode('not', {type: 'toggle'});
+logger.addMode('or', {type: 'toggle'});
 
 // option setting but allows modifying the content
-logger.mode('debug', function(msg) {
+logger.addMode('debug', function(msg) {
   return '[debug]: ' + msg;
 });
 
