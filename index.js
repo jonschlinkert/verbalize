@@ -7,10 +7,14 @@
 
 'use strict';
 
-var Logger = require('./lib/logger-events');
-var utils = require('./lib/utils');
+var Logger = require('log-events');
 var util = require('util');
 var use = require('use');
+var utils = require('./lib/utils');
+var colors = require('./plugins/colors');
+var handler = require('./plugins/handler');
+var isEnabled = require('./plugins/is-enabled');
+var styles = require('./plugins/styles');
 
 /**
  * Expose `Verbalize`
@@ -36,6 +40,7 @@ function Verbalize(options) {
   this.options = options || {};
   this.define('cache', {});
   use(this);
+  this.initPlugins();
 }
 
 /**
@@ -43,6 +48,13 @@ function Verbalize(options) {
  */
 
 util.inherits(Verbalize, Logger);
+
+Verbalize.prototype.initPlugins = function() {
+  this.use(colors());
+  this.use(styles());
+  this.use(isEnabled());
+  this.use(handler());
+};
 
 /**
  * Base formatting.
