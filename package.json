@@ -11,7 +11,7 @@
   "license": "MIT",
   "files": [
     "index.js",
-    "utils.js"
+    "lib"
   ],
   "main": "index.js",
   "engines": {
@@ -23,29 +23,29 @@
   },
   "dependencies": {
     "ansi-bold": "^0.1.1",
-    "ansi-cyan": "^0.1.1",
-    "ansi-green": "^0.1.1",
-    "ansi-red": "^0.1.1",
     "ansi-underline": "^0.1.1",
-    "ansi-yellow": "^0.1.1",
-    "chalk": "^1.1.1",
-    "component-emitter": "^1.2.0",
     "define-property": "^0.2.5",
     "extend-shallow": "^2.0.1",
     "falsey": "^0.3.0",
     "get-value": "^2.0.3",
     "lazy-cache": "^1.0.3",
-    "minimist": "^1.2.0",
+    "log-events": "^0.1.0",
     "set-value": "^0.3.3",
     "strip-color": "^0.1.0",
-    "time-diff": "^0.1.0",
-    "union-value": "^0.2.3",
     "use": "^1.1.2"
   },
   "devDependencies": {
-    "base": "^0.7.3",
+    "ansi-cyan": "^0.1.1",
+    "ansi-green": "^0.1.1",
+    "ansi-red": "^0.1.1",
+    "ansi-yellow": "^0.1.1",
+    "base": "^0.7.5",
     "base-option": "^0.6.1",
-    "mocha": "*"
+    "chalk": "^1.1.1",
+    "component-emitter": "^1.2.0",
+    "minimist": "^1.2.0",
+    "mocha": "*",
+    "union-value": "^0.2.3"
   },
   "keywords": [
     "256",
