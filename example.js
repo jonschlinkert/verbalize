@@ -1,26 +1,37 @@
 'use strict';
 
-var logger = require('./plugins/base-logger');
 var Base = require('base');
+var option = require('base-option');
+
+var logger = require('./plugins/base-logger');
 var base = new Base();
 
+base.use(option());
 base.use(logger());
 
-base.log('foo');
-base.verbose('foo');
-base.log.verbose('foo');
+base.option('verbose', false);
 
-base.log.info('foo');
-base.log.success('foo');
-base.log.error('foo');
-base.log.warn('foo');
+base.logger('logger: foo');
+base.verbose('verbose: foo');
+base.logger.verbose('logger.verbose: foo');
 
-base.verbose.info('foo');
-base.verbose.success('foo');
-base.verbose.error('foo');
-base.verbose.warn('foo');
+base.logger.info('logger.info: foo');
+base.logger.success('logger.success: foo');
+base.logger.error('logger.error: foo');
+base.logger.warn('logger.warn: foo');
 
-base.log.verbose.info('foo');
-base.log.verbose.success('foo');
-base.log.verbose.error('foo');
-base.log.verbose.warn('foo');
+base.verbose.info('verbose.info: foo');
+base.verbose.success('verbose.success: foo');
+base.verbose.error('verbose.error: foo');
+base.verbose.warn('verbose.warn: foo');
+
+base.logger.verbose.info('logger.verbose.info: foo');
+base.logger.verbose.success('logger.verbose.success: foo');
+base.logger.verbose.error('logger.verbose.error: foo');
+base.logger.verbose.warn('logger.verbose.warn: foo');
+
+base.logger.not.verbose('logger.not.verbose: foo');
+base.logger.not.verbose.info('logger.not.verbose.info: foo');
+base.logger.not.verbose.success('logger.not.verbose.success: foo');
+base.logger.not.verbose.error('logger.not.verbose.error: foo');
+base.logger.not.verbose.warn('logger.not.verbose.warn: foo');
