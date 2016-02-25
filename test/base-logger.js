@@ -44,6 +44,38 @@ describe('base-logger', function() {
     assert.equal(typeof app.logger, 'function');
   });
 
+  it('should not overwrite an existing method with a logger method', function() {
+    App = create();
+    app = new App();
+    app.error = function(str) {
+      return 'error: ' + str;
+    };
+    assert.equal(app.hasOwnProperty('error'), true);
+    assert.equal(app.error('bar'), 'error: bar');
+    app.use(logger());
+    assert.equal(app.hasOwnProperty('error'), true);
+    assert.equal(app.error('bar'), 'error: bar');
+  });
+
+  it('should throw an error when trying to add a logger for a methods already on the app', function(cb) {
+    App = create();
+    app = new App();
+    app.foo = function(str) {
+      return 'foo' + str;
+    };
+    assert.equal(app.hasOwnProperty('foo'), true);
+    assert.equal(app.foo('bar'), 'foobar');
+    app.use(logger());
+    try {
+      app.logger.addMode('foo');
+      cb(new Error('expected an error'));
+    } catch (err) {
+      assert(err);
+      assert.equal(err.message, 'App "base" already has a method "foo". Unable to add logger method "foo".');
+      cb();
+    }
+  });
+
   it('should have a _emit method', function() {
     assert.equal(typeof app.logger._emit, 'function');
   });
@@ -146,23 +178,23 @@ describe('base-logger', function() {
   });
 
   it('should allow passing a modifier function when defining a mode', function() {
-    app.logger.addMode('debug', function(msg) {
-      return '[DEBUG]: ' + msg;
+    app.logger.addMode('foo', function(msg) {
+      return '[FOO]: ' + msg;
     });
-    assert.equal(typeof app.logger.debug, 'function');
-    assert.equal(app.logger.modes.debug.fn('foo'), '[DEBUG]: foo');
+    assert.equal(typeof app.logger.foo, 'function');
+    assert.equal(app.logger.modes.foo.fn('foo'), '[FOO]: foo');
   });
 
   it('should allow calling a mode function directly', function(cb) {
-    app.logger.addMode('debug');
-    assert.equal(typeof app.logger.debug, 'function');
+    app.logger.addMode('foo');
+    assert.equal(typeof app.logger.foo, 'function');
     app.logger.on('log', function(stats) {
-      assert.deepEqual(stats.getModes('name'), ['debug']);
+      assert.deepEqual(stats.getModes('name'), ['foo']);
       assert.deepEqual(stats.getModifiers('name'), ['log']);
       assert.deepEqual(stats.args, ['foo']);
       cb();
     });
-    app.logger.debug('foo');
+    app.logger.foo('foo');
   });
 
   it('should throw an error when an undefined logger name is given to `_emit`', function(cb) {
