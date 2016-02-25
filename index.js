@@ -13,7 +13,6 @@ var use = require('use');
 var utils = require('./lib/utils');
 var colors = require('./plugins/colors');
 var handler = require('./plugins/handler');
-var isEnabled = require('./plugins/is-enabled');
 var styles = require('./plugins/styles');
 
 /**
@@ -40,6 +39,7 @@ function Verbalize(options) {
   this.options = options || {};
   this.define('cache', {});
   use(this);
+  this.initDefaults();
   this.initPlugins();
 }
 
@@ -49,11 +49,16 @@ function Verbalize(options) {
 
 util.inherits(Verbalize, Logger);
 
+Verbalize.prototype.initDefaults = function() {
+  this.addMode('verbose');
+  this.addMode('not', {mode: 'toggle'});
+};
+
 Verbalize.prototype.initPlugins = function() {
-  this.use(colors());
-  this.use(styles());
-  this.use(isEnabled());
-  this.use(handler());
+  this.use(colors(this.options));
+  this.use(styles(this.options));
+  this.use(utils.isEnabled(this.options));
+  this.use(handler(this.options));
 };
 
 /**
