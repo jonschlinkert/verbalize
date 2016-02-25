@@ -10,7 +10,7 @@ var argv = require('minimist')(process.argv.slice(2), {
 var Base = require('base');
 var option = require('base-option');
 
-var logger = require('../lib/plugins/base-logger');
+var logger = require('../lib/plugins').logger;
 var utils = require('../lib/utils');
 
 function App(options) {

@@ -19,7 +19,7 @@ if (argv.hasOwnProperty('debug') && utils.isFalsey(argv.debug)) {
 }
 
 var Verbalize = require('../');
-var rainbow = require('../lib/plugins/rainbow');
+var rainbow = require('../lib/plugins').rainbow;
 
 var logger = new Verbalize(utils.extend({}, argv));
 logger.use(rainbow());

@@ -11,9 +11,7 @@ var Logger = require('log-events');
 var util = require('util');
 var use = require('use');
 var utils = require('./lib/utils');
-var colors = require('./lib/plugins/colors');
-var handler = require('./lib/plugins/handler');
-var styles = require('./lib/plugins/styles');
+var plugins = require('./lib/plugins');
 
 /**
  * Expose `Verbalize`
@@ -55,10 +53,10 @@ Verbalize.prototype.initDefaults = function() {
 };
 
 Verbalize.prototype.initPlugins = function() {
-  this.use(colors(this.options));
-  this.use(styles(this.options));
-  this.use(utils.isEnabled(this.options));
-  this.use(handler(this.options));
+  this.use(plugins.colors(this.options));
+  this.use(plugins.styles(this.options));
+  this.use(plugins.isEnabled(this.options));
+  this.use(plugins.handler(this.options));
 };
 
 /**
