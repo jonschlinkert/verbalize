@@ -3,13 +3,13 @@
 var Base = require('base');
 var option = require('base-option');
 
-var logger = require('./plugins/base-logger');
+var logger = require('../plugins/base-logger');
 var base = new Base();
 
 base.use(option());
 base.use(logger());
 
-base.option('verbose', false);
+// base.option('verbose', true);
 
 base.logger('logger: foo');
 base.verbose('verbose: foo');

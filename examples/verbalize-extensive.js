@@ -3,6 +3,10 @@ var argv = require('minimist')(process.argv.slice(2), {
   alias: {
     v: 'verbose',
     d: 'debug'
+  },
+  boolean: ['strict'],
+  default: {
+    strict: false
   }
 });
 
@@ -36,7 +40,7 @@ logger.addMode('debug', function(msg) {
   return '[debug]: ' + msg;
 });
 
-logger.on('*', function(stats) {
+logger.on('*', function(name, stats) {
   // console.log(stats);
   // if (stats.hasMode('debug')) {
   //   debug('base:' + stats.name).apply(null, stats.args);

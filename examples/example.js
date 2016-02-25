@@ -4,9 +4,8 @@ var Verbalize = require('../');
 var rainbow = require('../plugins/rainbow');
 var logger = new Verbalize();
 logger.use(rainbow());
-logger.verbose = false;
 
-logger.on('*', function(stats) {
+logger.on('*', function(name, stats) {
   this.handle(stats);
 });
 
