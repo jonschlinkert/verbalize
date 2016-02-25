@@ -11,9 +11,9 @@ var Logger = require('log-events');
 var util = require('util');
 var use = require('use');
 var utils = require('./lib/utils');
-var colors = require('./plugins/colors');
-var handler = require('./plugins/handler');
-var styles = require('./plugins/styles');
+var colors = require('./lib/plugins/colors');
+var handler = require('./lib/plugins/handler');
+var styles = require('./lib/plugins/styles');
 
 /**
  * Expose `Verbalize`

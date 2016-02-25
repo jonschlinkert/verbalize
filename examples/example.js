@@ -1,7 +1,7 @@
 'use strict';
 
 var Verbalize = require('../');
-var rainbow = require('../plugins/rainbow');
+var rainbow = require('../lib/plugins/rainbow');
 var logger = new Verbalize();
 logger.use(rainbow());
 
