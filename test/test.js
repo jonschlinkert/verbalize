@@ -9,11 +9,6 @@ describe('verbalize', function() {
     logger = new Verbalize();
   });
 
-  // it('should get and set values.', function() {
-  //   logger.set('a', 'b');
-  //   assert.equal(logger.get('a'), 'b');
-  // });
-
   it('should .', function() {
     logger.options.stripColor = true;
     logger.info('foo');
