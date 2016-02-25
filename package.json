@@ -38,6 +38,11 @@
   "devDependencies": {
     "base": "^0.7.9",
     "base-option": "^0.6.1",
+    "capture-stream": "^0.1.2",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^2.0.0",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.2.0",
     "minimist": "^1.2.0"
   },
   "keywords": [
