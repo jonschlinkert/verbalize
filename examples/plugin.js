@@ -3,7 +3,7 @@
 var Base = require('base');
 var option = require('base-option');
 
-var logger = require('../lib/plugins').logger;
+var logger = require('base-logger');
 var base = new Base();
 
 base.use(option());

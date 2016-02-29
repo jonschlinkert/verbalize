@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "base": "^0.7.9",
+    "base-logger": "^0.1.0",
     "base-option": "^0.6.1",
     "capture-stream": "^0.1.2",
     "gulp": "^3.9.1",
