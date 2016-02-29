@@ -98,7 +98,7 @@ function create() {
   };
 
   /**
-   * Write output.
+   * Write formatted output.
    *
    * @return {String}
    * @api public
@@ -109,7 +109,7 @@ function create() {
   };
 
   /**
-   * Write output followed by a newline.
+   * Write formatted output followed by a newline.
    *
    * @return {String}
    * @api public
@@ -130,21 +130,13 @@ function create() {
     return this._sep || (this._sep = this.stylize('gray', str || ' · '));
   };
 
-  Verbalize.prototype.style = function(name, options, fn) {
-    if (typeof options === 'function') {
-      fn = options;
-      options = {};
-    }
-    var opts = utils.extend({type: ['modifier'], fn: fn}, options);
-    return this.addLogger(name, opts);
-  };
-
   /**
    * Stylize the given `msg` with the specified `color`.
    *
    * @param {String} `color` The name of the color to use
    * @param {String} `msg` The args to stylize.
    * @return {String}
+   * @api public
    */
 
   Verbalize.prototype.stylize = function(color, args) {
@@ -176,6 +168,30 @@ function create() {
   };
 
   /**
+   * Add a style logger.
+   *
+   * ```js
+   * logger.style('red', function() {
+   *   return this.stylize('red', arguments);
+   * });
+   * ```
+   * @param  {String} `name` Name of style logger method to be added to the logger.
+   * @param  {Object} `options` Options to control style logger method.
+   * @param  {Function} `fn` Optional function to do the styling.
+   * @return {Object} `this` for chaining.
+   * @api public
+   */
+
+  Verbalize.prototype.style = function(name, options, fn) {
+    if (typeof options === 'function') {
+      fn = options;
+      options = {};
+    }
+    var opts = utils.extend({type: ['modifier'], fn: fn}, options);
+    return this.addLogger(name, opts);
+  };
+
+  /**
    * Define non-enumerable property `key` with the given value.
    *
    * @param {String} `key`
@@ -197,5 +213,18 @@ function create() {
  */
 
 module.exports = create();
+
+/**
+ * Static method to create a new constructor.
+ * This is useful in tests and places where the original
+ * prototype should not be updated.
+ *
+ * ```js
+ * var MyLogger = Verbalize.create();
+ * var logger = new MyLogger();
+ * ```
+ * @name Verbalize.create
+ * @api public
+ */
 
 module.exports.create = create;
