@@ -1,6 +1,6 @@
 {
   "name": "verbalize",
-  "description": "A lightweight command line logging utility, with verbose mode and colors by chalk.",
+  "description": "A pluggable logging utility with built-in colors, styles, and modes.",
   "version": "0.1.1",
   "homepage": "https://github.com/jonschlinkert/verbalize",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
@@ -74,8 +74,17 @@
     "xterm"
   ],
   "verb": {
+    "toc": true,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
     "related": {
-      "list": []
+      "list": [
+        "base",
+        "base-logger",
+        "log-events"
+      ]
     },
     "reflinks": [
       "strip-ansi"
