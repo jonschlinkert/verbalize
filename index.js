@@ -45,10 +45,18 @@ function create() {
 
   util.inherits(Verbalize, Logger);
 
+  /**
+   * Initialize default settings
+   */
+
   Verbalize.prototype.initDefaults = function() {
     this.addMode('verbose');
     this.addMode('not', {mode: 'toggle'});
   };
+
+  /**
+   * Initialize core plugins
+   */
 
   Verbalize.prototype.initPlugins = function() {
     this.use(plugins.colors(this.options));
