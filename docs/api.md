@@ -1,32 +1,52 @@
-# API
+## Usage
 
 ```js
-var log = new Verbalize({verbose: true});
+var logger = new Verbalize();
 ```
 
-Colors
-
+### Write
 
 ```js
-console.log(log.red('Foo'));
+logger.write('foo');
+logger.writeln('bar');
 ```
 
-Verbose
-
+### Colors
 
 ```js
-log.verbose = true;
-
-console.log(log.verbose.red('Foo'));
+logger.writeln(logger.red('foo'));
 ```
 
+### Styles
 
-## Levels
+```js
+logger.writeln(logger.underline('foo'));
+```
+
+### Emitters
+
+```js
+logger.info('foo');
+```
+
+### Modes
+
+```js
+logger.options.verbose = true;
+logger.verbose.info('foo');
+```
+
+```js
+logger.options.verbose = false;
+logger.not.verbose.error('foo');
+```
+
+### Levels
 
  * `silent` (**0**): do not log any messages.
- * `fatal` (**10**): log fatal errors that prevent jsdoc from running
- * `error` (**20**): log all errors, including errors from which jsdoc can recover.
- * `warn` (**30**): log `warn` and `error` messages
- * `info` (**40**): log `info`, `warn` and `error` messages
- * `debug` (**50**): log `debug`, `info`, `warn` and `error` messages
- * `verbose` (**100**): log all messages
+ * `fatal` (**1**): log fatal errors that prevent the application from running
+ * `error` (**2**): log all errors, including errors from which the application can recover.
+ * `warn` (**3**): log `warn` and `error` messages
+ * `info` (**4**): log `info`, `warn` and `error` messages
+ * `debug` (**5**): log `debug`, `info`, `warn` and `error` messages
+ * `verbose` (**>5**): log all messages
