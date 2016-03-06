@@ -50,8 +50,8 @@ function create() {
    */
 
   Verbalize.prototype.initDefaults = function() {
-    this.addMode('verbose');
-    this.addMode('not', {mode: 'toggle'});
+    this.mode('verbose');
+    this.mode('not', {mode: 'toggle'});
   };
 
   /**
@@ -135,7 +135,7 @@ function create() {
    */
 
   Verbalize.prototype.sep = function(str) {
-    return this._sep || (this._sep = this.stylize('gray', str || ' · '));
+    return this._sep || (this._sep = this.gray(str || ' · '));
   };
 
   /**
@@ -159,44 +159,20 @@ function create() {
       if (strip) {
         res.push(utils.stripColor(arg));
       } else {
-        var modifier = null;
+        var style = null;
         if (typeof color === 'string') {
-          modifier = utils.get(this.modifiers, [color]);
+          style = this.styleKeys.indexOf(color) !== -1 && this[color];
         } else {
-          modifier = color;
+          style = color;
         }
-        if (modifier) {
-          res.push(modifier.fn.call(this, arg));
+        if (typeof style === 'function') {
+          res.push(style(arg));
         } else {
           res.push(arg);
         }
       }
     }
     return res;
-  };
-
-  /**
-   * Add a style logger.
-   *
-   * ```js
-   * logger.style('red', function() {
-   *   return this.stylize('red', arguments);
-   * });
-   * ```
-   * @param  {String} `name` Name of style logger method to be added to the logger.
-   * @param  {Object} `options` Options to control style logger method.
-   * @param  {Function} `fn` Optional function to do the styling.
-   * @return {Object} `this` for chaining.
-   * @api public
-   */
-
-  Verbalize.prototype.style = function(name, options, fn) {
-    if (typeof options === 'function') {
-      fn = options;
-      options = {};
-    }
-    var opts = utils.extend({type: ['modifier'], fn: fn}, options);
-    return this.addLogger(name, opts);
   };
 
   /**
