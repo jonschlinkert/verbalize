@@ -24,24 +24,24 @@ describe('verbalize', function() {
     assert.equal(logger instanceof Verbalize, true);
   });
 
-  it('should have a _emit method', function() {
+  it('should have an _emit method', function() {
     assert.equal(typeof logger._emit, 'function');
   });
 
-  it('should have a emit method', function() {
+  it('should have an emit method', function() {
     assert.equal(typeof logger.emit, 'function');
   });
 
-  it('should have a on method', function() {
+  it('should have an on method', function() {
     assert.equal(typeof logger.on, 'function');
   });
 
-  it('should have a addLogger method', function() {
-    assert.equal(typeof logger.addLogger, 'function');
+  it('should have an emitter method', function() {
+    assert.equal(typeof logger.emitter, 'function');
   });
 
-  it('should have a addMode method', function() {
-    assert.equal(typeof logger.addMode, 'function');
+  it('should have a mode method', function() {
+    assert.equal(typeof logger.mode, 'function');
   });
 
   it('should have a default logger `log` method', function() {
@@ -50,41 +50,41 @@ describe('verbalize', function() {
 
   it('should add a new logger method', function() {
     assert.equal(typeof logger.foo, 'undefined');
-    logger.addLogger('foo');
+    logger.emitter('foo');
     assert.equal(typeof logger.foo, 'function');
   });
 
   it('should add a new mode method', function() {
     assert.equal(typeof logger.bar, 'undefined');
-    logger.addMode('bar');
+    logger.mode('bar');
     assert.equal(typeof logger.bar, 'function');
   });
 
   it('should emit when adding a new logger method', function(cb) {
-    logger.on('addLogger', function(name, modifier) {
+    logger.on('emitter', function(name) {
       assert.equal(name, 'foo');
-      assert.deepEqual(logger.modifiers[name], modifier);
+      assert.equal(logger.emitterKeys.indexOf(name) === -1, false);
       cb();
     });
-    logger.addLogger('foo');
+    logger.emitter('foo');
   });
 
   it('should emit when adding a new mode method', function(cb) {
-    logger.on('addMode', function(name, mode) {
+    logger.on('mode', function(name) {
       assert.equal(name, 'bar');
-      assert.deepEqual(logger.modes[name], mode);
+      assert.equal(logger.modeKeys.indexOf(name) === -1, false);
       cb();
     });
-    logger.addMode('bar');
+    logger.mode('bar');
   });
 
   it('should chain mode and logger methods', function() {
     assert.equal(typeof logger.foo, 'undefined');
     assert.equal(typeof logger.bar, 'undefined');
-    logger.addMode('bar');
+    logger.mode('bar');
     assert.equal(typeof logger.bar, 'function');
     assert.equal(typeof logger.foo, 'undefined');
-    logger.addLogger('foo');
+    logger.emitter('foo');
     assert.equal(typeof logger.bar, 'function');
     assert.equal(typeof logger.foo, 'function');
     assert.equal(typeof logger.bar.foo, 'function');
@@ -92,7 +92,7 @@ describe('verbalize', function() {
 
   it('should allow overwritting set methods', function() {
     assert.equal(typeof logger.foo, 'undefined');
-    logger.addLogger('foo');
+    logger.emitter('foo');
     assert.equal(typeof logger.foo, 'function');
     logger.foo = function(str) {
       console.error(str);
@@ -107,18 +107,19 @@ describe('verbalize', function() {
     assert.equal(output, 'foo\nbar\n');
   });
 
-  it('should allow passing a modifier function when creating a logger', function() {
-    logger.addLogger('foo', function(msg) {
+  it('should allow passing an emitter function when creating a logger', function() {
+    logger.emitter('foo', function(msg) {
       return '[LOG]: ' + msg;
     });
     assert.equal(typeof logger.foo, 'function');
-    assert.equal(logger.modifiers.foo.fn('foo'), '[LOG]: foo');
+    assert.equal(logger.emitters.foo.fn('foo'), '[LOG]: foo');
   });
 
-  it('should chain modifiers in current stats object when type is modifier', function(cb) {
+  it('should chain emitters in current stats object', function(cb) {
     logger.on('log', function(stats) {
+      assert.equal(stats.name, 'log');
       assert.deepEqual(stats.getModes('name'), ['verbose']);
-      assert.deepEqual(stats.getModifiers('name'), ['red', 'log']);
+      assert.deepEqual(stats.styles, ['red']);
       assert.deepEqual(stats.args, ['foo']);
       cb();
     });
@@ -126,7 +127,7 @@ describe('verbalize', function() {
   });
 
   it('should allow passing a modifier function when defining a mode', function() {
-    logger.addMode('debug', function(msg) {
+    logger.mode('debug', function(msg) {
       return '[DEBUG]: ' + msg;
     });
     assert.equal(typeof logger.debug, 'function');
@@ -134,11 +135,12 @@ describe('verbalize', function() {
   });
 
   it('should allow calling a mode function directly', function(cb) {
-    logger.addMode('debug');
+    logger.mode('debug');
     assert.equal(typeof logger.debug, 'function');
     logger.on('log', function(stats) {
+      assert.equal(stats.name, 'log');
       assert.deepEqual(stats.getModes('name'), ['debug']);
-      assert.deepEqual(stats.getModifiers('name'), ['log']);
+      assert.deepEqual(stats.styles, []);
       assert.deepEqual(stats.args, ['foo']);
       cb();
     });
@@ -151,7 +153,7 @@ describe('verbalize', function() {
       cb(new Error('expected an error'));
     } catch (err) {
       assert(err);
-      assert.equal(err.message, 'Unable to find logger "foo"');
+      assert.equal(err.message, 'Unable to find emitter "foo"');
       cb();
     }
   });
@@ -197,7 +199,11 @@ describe('verbalize', function() {
   });
 
   it('should stylize a message', function() {
-    assert.equal(logger.stylize('red', 'red message'), '\u001b[31mred message\u001b[39m');
+    assert.equal(logger.red('red message'), '\u001b[31mred message\u001b[39m');
+
+    // (function() {
+    //   assert.equal(logger.stylize('red', arguments), '\u001b[31mred message\u001b[39m');
+    // })('red message');
   });
 
   it('should not stylize a message when style is not found', function() {
@@ -289,8 +295,8 @@ describe('verbalize', function() {
     var time = new Date().toLocaleTimeString();
     logger.log('log message');
     logger.subhead('subhead message');
-    logger.time('time message');
-    logger.timestamp('timestamp message');
+    console.log(logger.time('time message'));
+    console.log(logger.timestamp('timestamp message'));
     logger.inform('inform message');
     logger.info('info message');
     logger.warn('warn message');
@@ -299,7 +305,7 @@ describe('verbalize', function() {
 
     var output = restore(true);
     assert.equal(output, [
-      '\u001b[1mlog message\u001b[22m',
+      'log message',
       '\u001b[1msubhead message\u001b[22m',
       '\u001b[40m\u001b[37m' + time + '\u001b[39m\u001b[49m ',
       '\u001b[40m\u001b[37m' + time + '\u001b[39m\u001b[49m \u001b[90mtimestamp message\u001b[39m',
@@ -314,12 +320,8 @@ describe('verbalize', function() {
 
   it('should handle plugin styles', function() {
     var restore = capture(process.stdout);
-    logger.on('*', function(name, stats) {
-      this.handle(stats);
-    });
-
     logger.use(require('../lib/plugins/rainbow')());
-    logger.rainbow('rainbow message');
+    console.log(logger.rainbow('rainbow message'));
 
     var output = restore(true);
     assert.equal(output, '\u001b[31mr\u001b[39m\u001b[33ma\u001b[39m\u001b[32mi\u001b[39m\u001b[34mn\u001b[39m\u001b[36mb\u001b[39m\u001b[35mo\u001b[39m\u001b[1mw\u001b[22m \u001b[31mm\u001b[39m\u001b[33me\u001b[39m\u001b[32ms\u001b[39m\u001b[34ms\u001b[39m\u001b[36ma\u001b[39m\u001b[35mg\u001b[39m\u001b[1me\u001b[22m\n');
