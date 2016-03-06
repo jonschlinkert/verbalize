@@ -2,7 +2,9 @@
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {
     v: 'verbose',
-    d: 'debug'
+    d: 'debug',
+    l: 'loglevel',
+    level: 'loglevel'
   },
   boolean: ['strict'],
   default: {
