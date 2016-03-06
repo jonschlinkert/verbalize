@@ -1,255 +1,214 @@
-/**
+/*!
  * verbalize <https://github.com/jonschlinkert/verbalize>
- * A lightweight logging library.
  *
- * Copyright (c) 2014 Jon Schlinkert, contributors.
- * Licensed under the MIT license.
+ * Copyright (c) 2014-2015, Jon Schlinkert.
+ * Licensed under the MIT License.
  */
 
 'use strict';
 
-var chalk = require('chalk');
+var Base = require('log-events');
+var util = require('util');
+var use = require('use');
+var utils = require('./lib/utils');
+var plugins = require('./lib/plugins');
 
+function create() {
 
-/**
- * General log
- *
- * @api public
- * @return {string}
- */
+  var Logger = Base.create();
 
-var log = function () {
-  var args = Array.prototype.map.call(arguments, function (arg) {
-    return chalk.stripColor(arg);
-  });
-  args[0] = chalk.bold(args[0]);
-  return console.log.apply(this, args);
-};
+  /**
+   * Create an instance of `Verbalize` with the given `options`.
+   *
+   * ```js
+   * var logger = new Verbalize({verbose: true});
+   * ```
+   * @param {Object} `options`
+   * @api public
+   */
 
-
-/**
- * Runner, customize with the name of your lib.
- *
- * @api public
- * @return {String}
- */
-
-log.runner = '';
-
-
-/**
- * Expose verbose logging.
- */
-
-log.mode = {};
-log.mode.verbose = false;
-
-
-/**
- * Style a basic separator
- */
-
-log.sep = chalk.gray('·');
-
-
-/**
- * Expose chalk
- */
-
-Object.keys(chalk.styles).map(function(color) {
-  log[color] = chalk[color];
-});
-
-
-/**
- * Get the current time using `.toLocaleTimeString()`.
- *
- * @api private
- * @return {String}
- */
-
-var time = function() {
-  var time = new Date().toLocaleTimeString();
-  return chalk.bgBlack.white(time) + ' ';
-};
-
-
-/**
- * Base formatting for special logging.
- *
- * @api private
- * @return {String}
- */
-
-var format = function(color, text) {
-  return chalk[color]('  ' + log.runner + ' [' + text + '] ' + log.sep);
-};
-
-
-/**
- * Timestamp
- *
- * @api public
- * @return {string}
- */
-
-log.timestamp = function () {
-  var args = arguments;
-  args[0] = time() + chalk.gray(args[0]);
-  return console.log.apply(this, args);
-};
-
-
-/**
- * Testing some specialized logging formats.
- */
-
-log.subhead = function () {
-  var args = arguments;
-  args[0] = format('bold', args[0]);
-  return console.log.apply(this, args);
-};
-
-log.setup = function () {
-  var args = arguments;
-  args[0] = format('yellow', args[0]);
-  return console.log.apply(this, args);
-};
-
-log.register = function () {
-  var args = arguments;
-  args[0] = format('green', args[0]);
-  return console.log.apply(this, args);
-};
-
-log.run = function () {
-  var args = arguments;
-  args[0] = format('gray', args[0]);
-  return console.log.apply(this, args);
-};
-
-
-/**
- * Write
- *
- * @api public
- * @return {string}
- */
-
-log.write = function () {
-  return console.log.apply(this, arguments);
-};
-
-log.writeln = function () {
-  var args = arguments;
-  return console.log.apply('\n' + this, args);
-};
-
-
-/**
- * Info
- *
- * @api public
- * @return {string}
- */
-
-log.info = function () {
-  var args = arguments;
-  args[0] = chalk.cyan(args[0]);
-  return console.log.apply(this, args);
-};
-
-/**
- * Success
- *
- * @api public
- * @return {string}
- */
-
-log.success = function () {
-  var args = arguments;
-  args[0] = chalk.green(args[0]);
-  return console.log.apply(this, args);
-};
-
-
-/**
- * Done.
- *
- * @api public
- * @return {string}
- */
-
-log.done = function () {
-  var args = arguments;
-  args[0] = (chalk.green('  ' + log.runner + ' [' + args[0] + ']'));
-  return console.log.apply(this, args);
-};
-
-
-/**
- * Warn
- *
- * @api public
- * @return {string}
- */
-
-log.warn = function () {
-  var args = arguments;
-  args[0] = chalk.yellow(args[0]);
-  return console.warn.apply(this, args);
-};
-
-
-/**
- * Error
- *
- * @api public
- * @return {string}
- */
-
-log.error = function () {
-  var args = arguments;
-  args[0] = chalk.red(args[0]);
-  return console.error.apply(this, args);
-};
-
-
-/**
- * Fatal
- *
- * @api public
- * @return {string}
- */
-
-log.fatal = function () {
-  var args = arguments;
-  args[0] = (chalk.red('  ' + log.runner + ' [FAIL]:') + chalk.gray(' · ') + args[0]);
-  console.log();
-  console.log.apply(this, args);
-  process.exit(1);
-};
-
-
-/**
- * Expose all properties on the `log` object
- * to `verbose` mode.
- */
-
-log.verbose = {};
-
-Object.keys(log).filter(function(key) {
-  return typeof log[key] === 'function';
-}).forEach(function(key) {
-  log.verbose[key] = function() {
-    if(log.mode.verbose !== false) {
-      log[key].apply(log, arguments);
-      return log.verbose;
-    } else {
-      return;
+  function Verbalize(options) {
+    if (!(this instanceof Verbalize)) {
+      return new Verbalize(options);
     }
+    Logger.call(this);
+    this.options = options || {};
+    this.define('cache', {});
+    use(this);
+    this.initDefaults();
+    this.initPlugins();
+  }
+
+  /**
+   * Mixin `Logger` prototype methods
+   */
+
+  util.inherits(Verbalize, Logger);
+
+  /**
+   * Initialize default settings
+   */
+
+  Verbalize.prototype.initDefaults = function() {
+    this.mode('verbose');
+    this.mode('not', {mode: 'toggle'});
   };
-});
 
+  /**
+   * Initialize core plugins
+   */
 
-module.exports = log;
+  Verbalize.prototype.initPlugins = function() {
+    this.use(plugins.colors(this.options));
+    this.use(plugins.styles(this.options));
+    this.use(plugins.isEnabled(this.options));
+    this.use(plugins.handler(this.options));
+  };
+
+  /**
+   * Base formatting.
+   *
+   * @return {String} `msg`
+   * @api public
+   */
+
+  Verbalize.prototype._format = function(args) {
+    args = utils.toArray.apply(null, arguments);
+
+    if (args.length > 0) {
+      args[0] = String(args[0]);
+    }
+    return util.format.apply(util, args);
+  };
+
+  /**
+   * Write to the console.
+   *
+   * @return {String} `msg`
+   * @api public
+   */
+
+  Verbalize.prototype._write = function(msg) {
+    process.stdout.write(utils.markup(msg || ''));
+    return this;
+  };
+
+  /**
+   * Write to the console followed by a newline. A blank
+   * line is returned if no value is passed.
+   *
+   * @return {String} `msg`
+   * @api public
+   */
+
+  Verbalize.prototype._writeln = function(msg) {
+    return this._write((msg || '') + '\n');
+  };
+
+  /**
+   * Write formatted output.
+   *
+   * @return {String}
+   * @api public
+   */
+
+  Verbalize.prototype.write = function() {
+    return this._write(this._format(arguments));
+  };
+
+  /**
+   * Write formatted output followed by a newline.
+   *
+   * @return {String}
+   * @api public
+   */
+
+  Verbalize.prototype.writeln = function() {
+    return this._writeln(this._format(arguments));
+  };
+
+  /**
+   * Style a basic separator.
+   *
+   * @return {String}
+   * @api public
+   */
+
+  Verbalize.prototype.sep = function(str) {
+    return this._sep || (this._sep = this.gray(str || ' · '));
+  };
+
+  /**
+   * Stylize the given `msg` with the specified `color`.
+   *
+   * @param {String} `color` The name of the color to use
+   * @param {String} `msg` The args to stylize.
+   * @return {String}
+   * @api public
+   */
+
+  Verbalize.prototype.stylize = function(color, args) {
+    args = utils.toArray(args);
+    var len = args.length;
+    var res = [];
+    var idx = -1;
+
+    var strip = this.options.stripColor === true;
+    while (++idx < len) {
+      var arg = args[idx];
+      if (strip) {
+        res.push(utils.stripColor(arg));
+      } else {
+        var style = null;
+        if (typeof color === 'string') {
+          style = this.styleKeys.indexOf(color) !== -1 && this[color];
+        } else {
+          style = color;
+        }
+        if (typeof style === 'function') {
+          res.push(style(arg));
+        } else {
+          res.push(arg);
+        }
+      }
+    }
+    return res;
+  };
+
+  /**
+   * Define non-enumerable property `key` with the given value.
+   *
+   * @param {String} `key`
+   * @param {any} `value`
+   * @return {String}
+   * @api public
+   */
+
+  Verbalize.prototype.define = function(key, value) {
+    utils.define(this, key, value);
+    return this;
+  };
+
+  return Verbalize;
+}
+
+/**
+ * Expose `Verbalize`
+ */
+
+module.exports = create();
+
+/**
+ * Static method to create a new constructor.
+ * This is useful in tests and places where the original
+ * prototype should not be updated.
+ *
+ * ```js
+ * var MyLogger = Verbalize.create();
+ * var logger = new MyLogger();
+ * ```
+ * @name Verbalize.create
+ * @api public
+ */
+
+module.exports.create = create;

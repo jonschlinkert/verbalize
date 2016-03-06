@@ -1,47 +1,93 @@
 {
   "name": "verbalize",
+  "description": "A pluggable logging utility with built-in colors, styles, and modes.",
   "version": "0.1.1",
-  "description": "A lightweight command line logging utility, with verbose mode and colors by chalk.",
-  "author": {
-    "name": "Jon Schlinkert",
-    "url": "https://github.com/jonschlinkert"
-  },
   "homepage": "https://github.com/jonschlinkert/verbalize",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/jonschlinkert/verbalize/blob/master/LICENSE-MIT"
-    }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jonschlinkert/verbalize.git"
-  },
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/verbalize",
   "bugs": {
     "url": "https://github.com/jonschlinkert/verbalize/issues"
   },
+  "license": "MIT",
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "main": "index.js",
-  "scripts": {
-    "test": "mocha -R spec"
-  },
-  "dependencies": {
-    "chalk": "~0.4.0"
-  },
-  "devDependencies": {
-    "verb": "~0.1.20"
-  },
   "engines": {
     "node": ">=0.10.0",
     "npm": ">=1.2.10"
   },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "ansi-bold": "^0.1.1",
+    "ansi-underline": "^0.1.1",
+    "base-is-enabled": "^0.1.0",
+    "define-property": "^0.2.5",
+    "extend-shallow": "^2.0.1",
+    "falsey": "^0.3.0",
+    "get-value": "^2.0.3",
+    "lazy-cache": "^1.0.3",
+    "log-events": "^0.3.0",
+    "set-value": "^0.3.3",
+    "strip-color": "^0.1.0",
+    "use": "^1.1.2"
+  },
+  "devDependencies": {
+    "base": "^0.7.9",
+    "base-logger": "^0.1.0",
+    "base-option": "^0.6.1",
+    "capture-stream": "^0.1.2",
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^2.0.0",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.2.0",
+    "minimist": "^1.2.0"
+  },
   "keywords": [
-    "logging",
+    "256",
+    "ansi",
+    "chalk",
+    "cli",
+    "color",
+    "colors",
+    "colour",
+    "command",
+    "command-line",
+    "console",
+    "formatting",
+    "line",
     "log",
     "logger",
-    "terminal",
-    "command",
+    "logging",
     "message",
     "messages",
-    "command line"
-  ]
+    "rgb",
+    "shell",
+    "string",
+    "styles",
+    "terminal",
+    "text",
+    "tty",
+    "xterm"
+  ],
+  "verb": {
+    "toc": true,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
+    "related": {
+      "list": [
+        "base",
+        "base-logger",
+        "log-events"
+      ]
+    },
+    "reflinks": [
+      "strip-ansi"
+    ]
+  }
 }
