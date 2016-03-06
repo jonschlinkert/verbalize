@@ -13,7 +13,7 @@ var logger = new Verbalize();
 logger.options = utils.extend({verbose: false}, argv);
 
 logger.on('*', function(name, stats) {
-  this.handle(stats);
+  this.format(stats);
 });
 
 logger

@@ -6,7 +6,7 @@ var logger = new Verbalize();
 logger.use(rainbow());
 
 logger.on('*', function(name, stats) {
-  this.handle(stats);
+  this.format(stats);
 });
 
 logger.write(logger.red('red'));

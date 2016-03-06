@@ -47,7 +47,7 @@ logger.on('*', function(name, stats) {
   //   return;
   // }
 
-  this.handle(stats);
+  this.format(stats);
 });
 
 logger

@@ -62,7 +62,7 @@ function create() {
     this.use(plugins.colors(this.options));
     this.use(plugins.styles(this.options));
     this.use(plugins.isEnabled(this.options));
-    this.use(plugins.handler(this.options));
+    this.use(plugins.format(this.options));
   };
 
   /**

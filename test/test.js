@@ -231,10 +231,10 @@ describe('verbalize', function() {
     assert.equal(output, 'before \u001b[90m - \u001b[39m after\n');
   });
 
-  it('should handle a stats object and write formatted output', function() {
+  it('should format a stats object and write formatted output', function() {
     var restore = capture(process.stdout);
     logger.on('*', function(name, stats) {
-      this.handle(stats);
+      this.format(stats);
     });
 
     logger.info('info message');
@@ -242,10 +242,10 @@ describe('verbalize', function() {
     assert.equal(output, '\u001b[36minfo message\u001b[39m\n');
   });
 
-  it('should handle multiple stats objects with different modes', function() {
+  it('should format multiple stats objects with different modes', function() {
     var restore = capture(process.stdout);
     logger.on('*', function(name, stats) {
-      this.handle(stats);
+      this.format(stats);
     });
 
     logger.info('info message')
@@ -256,10 +256,10 @@ describe('verbalize', function() {
     assert.equal(output, '\u001b[36minfo message\u001b[39m\n');
   });
 
-  it('should handle multiple stats objects with different modes when verbose is `true`', function() {
+  it('should format multiple stats objects with different modes when verbose is `true`', function() {
     var restore = capture(process.stdout);
     logger.on('*', function(name, stats) {
-      this.handle(stats);
+      this.format(stats);
     });
 
     logger.options.verbose = true;
@@ -271,10 +271,10 @@ describe('verbalize', function() {
     assert.equal(output, '\u001b[36minfo message\u001b[39m\n\u001b[31merror message\u001b[39m\n');
   });
 
-  it('should handle multiple stats objects with different modes when verbose is `false`', function() {
+  it('should format multiple stats objects with different modes when verbose is `false`', function() {
     var restore = capture(process.stdout);
     logger.on('*', function(name, stats) {
-      this.handle(stats);
+      this.format(stats);
     });
 
     logger.options.verbose = false;
@@ -286,10 +286,10 @@ describe('verbalize', function() {
     assert.equal(output, '\u001b[36minfo message\u001b[39m\n\u001b[33mwarn message\u001b[39m\n');
   });
 
-  it('should handle default styles from styles plugin', function() {
+  it('should format default styles from styles plugin', function() {
     var restore = capture(process.stdout);
     logger.on('*', function(name, stats) {
-      this.handle(stats);
+      this.format(stats);
     });
 
     var time = new Date().toLocaleTimeString();
@@ -318,7 +318,7 @@ describe('verbalize', function() {
     ].join('\n'));
   });
 
-  it('should handle plugin styles', function() {
+  it('should format plugin styles', function() {
     var restore = capture(process.stdout);
     logger.use(require('../lib/plugins/rainbow')());
     console.log(logger.rainbow('rainbow message'));
