@@ -1,7 +1,7 @@
 {
   "name": "verbalize",
   "description": "A pluggable logging utility with built-in colors, styles, and modes.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "homepage": "https://github.com/jonschlinkert/verbalize",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "jonschlinkert/verbalize",
