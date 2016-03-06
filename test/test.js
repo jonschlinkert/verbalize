@@ -305,7 +305,7 @@ describe('verbalize', function() {
 
     var output = restore(true);
     assert.equal(output, [
-      'log message',
+      '\u001b[37mlog message\u001b[39m',
       '\u001b[1msubhead message\u001b[22m',
       '\u001b[40m\u001b[37m' + time + '\u001b[39m\u001b[49m ',
       '\u001b[40m\u001b[37m' + time + '\u001b[39m\u001b[49m \u001b[90mtimestamp message\u001b[39m',
