@@ -9,10 +9,10 @@ logger.on('*', function(name, stats) {
   this.handle(stats);
 });
 
-logger.write('red');
-logger.write('blue');
-logger.writeln('blue');
-logger.rainbow('rainbow');
+logger.write(logger.red('red'));
+logger.write(logger.blue('blue'));
+logger.writeln(logger.blue('blue'));
+logger.writeln(logger.rainbow('rainbow'));
 // logger._formatStyle('red', 'bar');
 
 logger.log('foo bar')

@@ -29,14 +29,14 @@ logger.use(rainbow());
  */
 
 // just an option setting
-logger.addMode('verbose');
+logger.mode('verbose');
 
 // use this as a toggle value
-logger.addMode('not', {type: 'toggle'});
-logger.addMode('or', {type: 'toggle'});
+logger.mode('not', {type: 'toggle'});
+logger.mode('or', {type: 'toggle'});
 
 // option setting but allows modifying the content
-logger.addMode('debug', function(msg) {
+logger.mode('debug', function(msg) {
   return '[debug]: ' + msg;
 });
 
@@ -83,3 +83,7 @@ logger.verbose('this is directly in verbose')
 
 
 logger.rainbow('this is a rainbow!!!!');
+
+var key = 'foo', val = 'bar';
+logger.verbose.info('command > %s: "%s"', key, logger.yellow(val));
+
