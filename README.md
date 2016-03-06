@@ -43,44 +43,44 @@ Create an instance of `Verbalize` with the given `options`.
 var logger = new Verbalize({verbose: true});
 ```
 
-### [._format](index.js#L67)
+### [._format](index.js#L75)
 
 Base formatting.
 
 * `returns` **{String}** `msg`  
 
-### [._write](index.js#L83)
+### [._write](index.js#L91)
 
 Write to the console.
 
 * `returns` **{String}** `msg`  
 
-### [._writeln](index.js#L96)
+### [._writeln](index.js#L104)
 
 Write to the console followed by a newline. A blank
 line is returned if no value is passed.
 
 * `returns` **{String}** `msg`  
 
-### [.write](index.js#L107)
+### [.write](index.js#L115)
 
 Write formatted output.
 
 * `returns` **{String}**  
 
-### [.writeln](index.js#L118)
+### [.writeln](index.js#L126)
 
 Write formatted output followed by a newline.
 
 * `returns` **{String}**  
 
-### [.sep](index.js#L129)
+### [.sep](index.js#L137)
 
 Style a basic separator.
 
 * `returns` **{String}**  
 
-### [.stylize](index.js#L142)
+### [.stylize](index.js#L150)
 
 Stylize the given `msg` with the specified `color`.
 
@@ -90,7 +90,7 @@ Stylize the given `msg` with the specified `color`.
 * `msg` **{String}**: The args to stylize.    
 * `returns` **{String}**  
 
-### [.define](index.js#L179)
+### [.define](index.js#L187)
 
 Define non-enumerable property `key` with the given value.
 
@@ -100,7 +100,7 @@ Define non-enumerable property `key` with the given value.
 * `value` **{any}**    
 * `returns` **{String}**  
 
-### [Verbalize.create](index.js#L206)
+### [Verbalize.create](index.js#L214)
 Static method to create a new constructor. This is useful in tests and places where the original prototype should not be updated.
 
 **Example**
