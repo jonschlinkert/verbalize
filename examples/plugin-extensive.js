@@ -2,7 +2,9 @@
 
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {
-    v: 'verbose'
+    v: 'verbose',
+    l: 'loglevel',
+    level: 'loglevel'
   },
   boolean: ['verbose']
 });
@@ -20,6 +22,7 @@ function App(options) {
   this.options = utils.extend({verbose: false}, this.options, options);
   Base.call(this);
   this.use(option());
+  this.enable('logger');
 
   // use verbose logger plugin
   this.use(logger());

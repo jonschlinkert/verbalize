@@ -4,7 +4,7 @@ var Base = require('base');
 var option = require('base-option');
 
 var logger = require('base-logger');
-var base = new Base();
+var base = new Base(null, {logger: true});
 
 base.use(option());
 base.use(logger());
